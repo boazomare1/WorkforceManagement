@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Attendance System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Today's Attendance Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if today_records %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in today_records %}
+                                <tr>
+                                    <td>{{ record[1] }}</td>
+                                    <td>{{ record[2] if record[2] else '-' }}</td>
+                                    <td>{{ record[3] if record[3] else '-' }}</td>
+                                    <td>
+                                        {% if record[2] %}
+                                            {% if record[3] %}
+                                                <span class="attendance-status status-present">
+                                                    <i class="fas fa-check me-1"></i>Checked Out
+                                                </span>
+                                            {% else %}
+                                                <span class="attendance-status status-warning">
+                                                    <i class="fas fa-clock me-1"></i>Present
+                                                </span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="attendance-status status-absent">
+                                                <i class="fas fa-times me-1"></i>Absent
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No attendance records for today yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-users me-2"></i>Quick Stats
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">{{ users|length }}</h4>
+                        <small class="text-muted">Total Users</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">{{ today_records|length }}</h4>
+                        <small class="text-muted">Present Today</small>
+                    </div>
+                </div>
+                <div class="row text-center mt-2">
+                    <div class="col-12">
+                        <small class="text-info">
+                            <i class="fas fa-face-smile me-1"></i>{{ known_faces_count }} faces loaded for recognition
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-success" id="startAttendanceBtn">
+                        <i class="fas fa-camera me-2"></i>Start Attendance System
+                    </button>
+                    <a href="{{ url_for('stop_attendance') }}" class="btn btn-danger">
+                        <i class="fas fa-stop me-2"></i>Stop Attendance System
+                    </a>
+                    <a href="{{ url_for('auto_checkout_all') }}" class="btn btn-warning">
+                        <i class="fas fa-sign-out-alt me-2"></i>Auto Checkout All
+                    </a>
+                    <a href="{{ url_for('register_user') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Register New User
+                    </a>
+                    <a href="{{ url_for('attendance') }}" class="btn btn-info">
+                        <i class="fas fa-calendar-alt me-2"></i>View Attendance
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>Recent Activity
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if recent_records %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in recent_records[:5] %}
+                                <tr>
+                                    <td>{{ record[1] }}</td>
+                                    <td>{{ record[4] }}</td>
+                                    <td>{{ record[2] if record[2] else '-' }}</td>
+                                    <td>{{ record[3] if record[3] else '-' }}</td>
+                                    <td>
+                                        {% if record[2] %}
+                                            {% if record[3] %}
+                                                <span class="badge bg-success">Checked Out</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Present</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-danger">Absent</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No recent activity.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Camera Modal -->
+<div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="attendanceModalLabel">
+                    <i class="fas fa-camera me-2"></i>Face Recognition Attendance
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="cameraContainer">
+                    <video id="attendanceVideo" width="640" height="480" autoplay></video>
+                    <canvas id="attendanceCanvas" width="640" height="480" style="display: none;"></canvas>
+                </div>
+                <div class="mt-3">
+                    <div id="attendanceStatus" class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Position your face in the camera view for automatic check-in/check-out
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="closeAttendanceBtn">
+                            <i class="fas fa-times me-2"></i>Close Camera
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let attendanceStream = null;
+let attendanceInterval = null;
+
+// Handle start attendance button
+document.getElementById('startAttendanceBtn').addEventListener('click', function() {
+    startAttendanceCamera();
+});
+
+// Handle close attendance button
+document.getElementById('closeAttendanceBtn').addEventListener('click', function() {
+    stopAttendanceCamera();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('attendanceModal'));
+    modal.hide();
+});
+
+// Start attendance camera
+function startAttendanceCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(mediaStream) {
+            attendanceStream = mediaStream;
+            const video = document.getElementById('attendanceVideo');
+            video.srcObject = mediaStream;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            modal.show();
+            
+            // Start face recognition polling
+            startFaceRecognitionPolling();
+        })
+        .catch(function(error) {
+            alert('Error accessing camera: ' + error.message);
+        });
+}
+
+// Stop attendance camera
+function stopAttendanceCamera() {
+    if (attendanceStream) {
+        attendanceStream.getTracks().forEach(track => track.stop());
+        attendanceStream = null;
+    }
+    if (attendanceInterval) {
+        clearInterval(attendanceInterval);
+        attendanceInterval = null;
+    }
+}
+
+// Start face recognition polling
+function startFaceRecognitionPolling() {
+    attendanceInterval = setInterval(function() {
+        captureAndProcessFrame();
+    }, 2000); // Check every 2 seconds
+}
+
+// Capture and process frame for face recognition
+function captureAndProcessFrame() {
+    const video = document.getElementById('attendanceVideo');
+    const canvas = document.getElementById('attendanceCanvas');
+    const context = canvas.getContext('2d');
+    
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0, 640, 480);
+    
+    // Convert canvas to blob
+    canvas.toBlob(function(blob) {
+        // Send frame to server for face recognition
+        const formData = new FormData();
+        formData.append('frame', blob, 'frame.jpg');
+        
+        // Show processing indicator
+        const statusDiv = document.getElementById('attendanceStatus');
+        statusDiv.className = 'alert alert-info';
+        statusDiv.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>Processing face recognition...`;
+        
+        fetch('/process_attendance_frame', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.user_name) {
+                updateAttendanceStatus(data.user_name, data.action);
+            } else {
+                // Show no face detected
+                statusDiv.className = 'alert alert-warning';
+                statusDiv.innerHTML = `<i class="fas fa-user-slash me-2"></i>No recognized face detected. Please position your face clearly in the camera.`;
+            }
+        })
+        .catch(error => {
+            console.error('Error processing frame:', error);
+            statusDiv.className = 'alert alert-danger';
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Error processing frame. Please try again.`;
+        });
+    }, 'image/jpeg');
+}
+
+// Update attendance status
+function updateAttendanceStatus(userName, action) {
+    const statusDiv = document.getElementById('attendanceStatus');
+    if (action === 'check_in') {
+        statusDiv.className = 'alert alert-success';
+        statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i>Welcome ${userName}! Checked in successfully.`;
+    } else if (action === 'check_out') {
+        statusDiv.className = 'alert alert-warning';
+        statusDiv.innerHTML = `<i class="fas fa-sign-out-alt me-2"></i>Goodbye ${userName}! Checked out successfully.`;
+    }
+    
+    // Auto-refresh the page after 3 seconds to show updated attendance
+    setTimeout(() => {
+        location.reload();
+    }, 3000);
+}
+
+// Handle modal close
+document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function() {
+    stopAttendanceCamera();
+});
+</script>
+{% endblock %} 
