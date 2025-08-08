@@ -54,8 +54,8 @@ A modern, web-based facial recognition attendance system built with Python Flask
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd facial-recognition-attendance
+   git clone https://github.com/boazomare1/WorkforceManagement.git
+   cd WorkforceManagement
    ```
 
 2. **Run the installation script**
@@ -165,7 +165,7 @@ Update dashboard in real-time
 ## 🛠️ File Structure
 
 ```
-facial-recognition-attendance/
+WorkforceManagement/
 ├── main.py                    # Application entry point
 ├── web_interface.py           # Flask routes and web logic
 ├── database.py                # Database operations and schema
@@ -248,6 +248,14 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 ## 📞 Support
 
 For support or questions, please open an issue in the GitHub repository.
+
+## 🔗 Repository Information
+
+- **GitHub Repository**: https://github.com/boazomare1/WorkforceManagement
+- **Clone URL**: `https://github.com/boazomare1/WorkforceManagement.git`
+- **License**: MIT License
+- **Language**: Python
+- **Framework**: Flask
 
 ---
 
