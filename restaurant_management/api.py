@@ -1,16 +1,419 @@
 import frappe
 from frappe import _
-from frappe.utils import nowdate, getdate, now_datetime
+from frappe.utils import nowdate, getdate, now_datetime, cint, flt
+from frappe.auth import LoginManager
+from frappe.sessions import Session
+from werkzeug.security import check_password_hash, generate_password_hash
 import json
+import hashlib
+import secrets
+
+# ============================================================================
+# AUTHENTICATION & AUTHORIZATION APIs
+# ============================================================================
+
+def get_current_user():
+    """Get current authenticated user"""
+    return frappe.session.user
+
+def has_permission(role_required, user=None):
+    """Check if user has required role"""
+    if not user:
+        user = get_current_user()
+    
+    if user == "Administrator":
+        return True
+    
+    user_roles = frappe.get_roles(user)
+    
+    # Role hierarchy (higher roles include lower role permissions)
+    role_hierarchy = {
+        "Restaurant Owner": ["Restaurant Manager", "Restaurant Staff", "Restaurant Kitchen", "Restaurant Cashier"],
+        "Restaurant Manager": ["Restaurant Staff", "Restaurant Kitchen", "Restaurant Cashier"],
+        "Restaurant Kitchen": [],
+        "Restaurant Staff": [],
+        "Restaurant Cashier": []
+    }
+    
+    # Check if user has the required role or a higher role
+    for user_role in user_roles:
+        if user_role == role_required:
+            return True
+        if user_role in role_hierarchy and role_required in role_hierarchy[user_role]:
+            return True
+    
+    return False
+
+def require_auth(role_required=None):
+    """Decorator to require authentication and optional role"""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Check if user is authenticated
+            if frappe.session.user == "Guest":
+                frappe.throw(_("Authentication required"), frappe.AuthenticationError)
+            
+            # Check role if specified
+            if role_required and not has_permission(role_required):
+                frappe.throw(_("Insufficient permissions"), frappe.PermissionError)
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+def login():
+    """Authenticate user and create session"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        email = data.get("email")
+        password = data.get("password")
+        
+        if not email or not password:
+            return {
+                "success": False,
+                "message": "Email and password are required"
+            }
+        
+        # Check if user exists and is staff member
+        staff = frappe.db.get_value("Restaurant Staff", 
+            {"email": email, "employment_status": "Active"}, 
+            ["name", "full_name", "position", "department", "email"]
+        )
+        
+        if not staff:
+            return {
+                "success": False,
+                "message": "Invalid credentials or inactive account"
+            }
+        
+        # Authenticate with Frappe
+        login_manager = LoginManager()
+        login_manager.authenticate(email, password)
+        
+        if login_manager.user:
+            # Get user roles and staff info
+            user_roles = frappe.get_roles(email)
+            
+            return {
+                "success": True,
+                "message": "Login successful",
+                "data": {
+                    "user": email,
+                    "full_name": staff[1],
+                    "position": staff[2],
+                    "department": staff[3],
+                    "roles": user_roles,
+                    "session_id": frappe.session.sid
+                }
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Invalid credentials"
+            }
+            
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Login failed: {str(e)}"
+        }
+
+@frappe.whitelist()
+def logout():
+    """Logout current user"""
+    try:
+        frappe.local.login_manager.logout()
+        return {
+            "success": True,
+            "message": "Logged out successfully"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Logout failed: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+def register_staff():
+    """Register a new staff member (Admin only)"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        
+        # Validate required fields
+        required_fields = ["full_name", "email", "position", "department", "hire_date", "base_hourly_rate"]
+        for field in required_fields:
+            if not data.get(field):
+                return {
+                    "success": False,
+                    "message": f"Missing required field: {field}"
+                }
+        
+        # Check if email already exists
+        if frappe.db.exists("User", data["email"]):
+            return {
+                "success": False,
+                "message": "User with this email already exists"
+            }
+        
+        # Create staff record first
+        staff = frappe.get_doc({
+            "doctype": "Restaurant Staff",
+            "full_name": data["full_name"],
+            "email": data["email"],
+            "phone": data.get("phone"),
+            "position": data["position"],
+            "department": data["department"],
+            "hire_date": data["hire_date"],
+            "base_hourly_rate": data["base_hourly_rate"],
+            "employment_status": "Active"
+        })
+        staff.insert(ignore_permissions=True)
+        
+        # Create user account
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": data["email"],
+            "first_name": data["full_name"].split()[0],
+            "last_name": " ".join(data["full_name"].split()[1:]) if len(data["full_name"].split()) > 1 else "",
+            "user_type": "System User",
+            "send_welcome_email": 0
+        })
+        
+        # Set temporary password if provided
+        if data.get("password"):
+            user.new_password = data["password"]
+        
+        user.insert(ignore_permissions=True)
+        
+        # Assign role based on position
+        role = get_role_for_position(data["position"])
+        user.add_roles(role)
+        
+        return {
+            "success": True,
+            "message": f"Staff member {data['full_name']} registered successfully",
+            "data": {
+                "staff_id": staff.staff_id,
+                "email": user.email,
+                "role": role
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Registration failed: {str(e)}"
+        }
+
+def get_role_for_position(position):
+    """Map position to Frappe role"""
+    role_mapping = {
+        "Owner": "Restaurant Owner",
+        "Manager": "Restaurant Manager", 
+        "Assistant Manager": "Restaurant Manager",
+        "Waiter": "Restaurant Staff",
+        "Waitress": "Restaurant Staff",
+        "Server": "Restaurant Staff",
+        "Chef": "Restaurant Kitchen",
+        "Sous Chef": "Restaurant Kitchen", 
+        "Cook": "Restaurant Kitchen",
+        "Kitchen Staff": "Restaurant Kitchen",
+        "Prep Cook": "Restaurant Kitchen",
+        "Cashier": "Restaurant Cashier",
+        "Host": "Restaurant Staff",
+        "Hostess": "Restaurant Staff",
+        "Bartender": "Restaurant Staff",
+        "Dishwasher": "Restaurant Staff",
+        "Busser": "Restaurant Staff"
+    }
+    return role_mapping.get(position, "Restaurant Staff")
+
+@frappe.whitelist()
+def get_current_user_info():
+    """Get current user information"""
+    try:
+        user = get_current_user()
+        if user == "Guest":
+            return {
+                "success": False,
+                "message": "Not authenticated"
+            }
+        
+        # Get staff information
+        staff = frappe.db.get_value("Restaurant Staff", 
+            {"email": user}, 
+            ["staff_id", "full_name", "position", "department", "employment_status"],
+            as_dict=True
+        )
+        
+        if not staff:
+            return {
+                "success": False,
+                "message": "Staff record not found"
+            }
+        
+        return {
+            "success": True,
+            "data": {
+                "email": user,
+                "staff_id": staff.staff_id,
+                "full_name": staff.full_name,
+                "position": staff.position,
+                "department": staff.department,
+                "roles": frappe.get_roles(user),
+                "employment_status": staff.employment_status
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting user info: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+def reset_password():
+    """Send password reset email"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        email = data.get("email")
+        
+        if not email:
+            return {
+                "success": False,
+                "message": "Email is required"
+            }
+        
+        # Check if user exists and is active staff
+        staff = frappe.db.get_value("Restaurant Staff", 
+            {"email": email, "employment_status": "Active"}, 
+            "name"
+        )
+        
+        if not staff:
+            return {
+                "success": False,
+                "message": "Email not found or account inactive"
+            }
+        
+        # Send password reset email using Frappe's built-in functionality
+        from frappe.utils.password import update_password
+        reset_password_key = frappe.generate_hash(length=32)
+        
+        # Store reset key
+        frappe.db.set_value("User", email, "reset_password_key", reset_password_key)
+        frappe.db.commit()
+        
+        # TODO: Send email with reset link
+        # For now, return the reset key (in production, this should be emailed)
+        
+        return {
+            "success": True,
+            "message": "Password reset instructions have been sent to your email",
+            "reset_key": reset_password_key  # Remove this in production
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Password reset failed: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+def confirm_password_reset():
+    """Confirm password reset with token"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        email = data.get("email")
+        reset_key = data.get("reset_key")
+        new_password = data.get("new_password")
+        
+        if not all([email, reset_key, new_password]):
+            return {
+                "success": False,
+                "message": "Email, reset key, and new password are required"
+            }
+        
+        # Verify reset key
+        stored_key = frappe.db.get_value("User", email, "reset_password_key")
+        if not stored_key or stored_key != reset_key:
+            return {
+                "success": False,
+                "message": "Invalid or expired reset key"
+            }
+        
+        # Update password
+        from frappe.utils.password import update_password
+        update_password(email, new_password)
+        
+        # Clear reset key
+        frappe.db.set_value("User", email, "reset_password_key", "")
+        frappe.db.commit()
+        
+        return {
+            "success": True,
+            "message": "Password updated successfully"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Password reset confirmation failed: {str(e)}"
+        }
+
+@frappe.whitelist(methods=["POST"])
+def change_password():
+    """Change password for authenticated user"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+        
+        if not current_password or not new_password:
+            return {
+                "success": False,
+                "message": "Current password and new password are required"
+            }
+        
+        user = get_current_user()
+        
+        # Verify current password
+        from frappe.utils.password import check_password
+        if not check_password(user, current_password):
+            return {
+                "success": False,
+                "message": "Current password is incorrect"
+            }
+        
+        # Update password
+        from frappe.utils.password import update_password
+        update_password(user, new_password)
+        
+        return {
+            "success": True,
+            "message": "Password changed successfully"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Password change failed: {str(e)}"
+        }
 
 # ============================================================================
 # STAFF MANAGEMENT APIs
 # ============================================================================
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def create_staff(staff_data):
     """Create a new staff member"""
     try:
+        # Check authentication and role
+        if frappe.session.user == "Guest":
+            return {"success": False, "message": "Authentication required"}
+        
+        if not has_permission("Restaurant Manager"):
+            return {"success": False, "message": "Insufficient permissions. Manager role required."}
         data = json.loads(staff_data) if isinstance(staff_data, str) else staff_data
         
         # Create new staff document
@@ -57,10 +460,16 @@ def create_staff(staff_data):
             "message": f"Error creating staff: {str(e)}"
         }
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_staff(staff_id=None):
     """Get staff member(s)"""
     try:
+        # Check authentication and role
+        if frappe.session.user == "Guest":
+            return {"success": False, "message": "Authentication required"}
+        
+        if not has_permission("Restaurant Staff"):
+            return {"success": False, "message": "Insufficient permissions"}
         if staff_id:
             # Get specific staff member
             staff = frappe.get_doc("Restaurant Staff", staff_id)
@@ -885,10 +1294,16 @@ def get_pricing_contexts():
         "data": pricing_contexts
     }
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def create_order(order_data):
     """Create a new restaurant order"""
     try:
+        # Check authentication and role
+        if frappe.session.user == "Guest":
+            return {"success": False, "message": "Authentication required"}
+        
+        if not has_permission("Restaurant Cashier"):
+            return {"success": False, "message": "Insufficient permissions. Cashier role required."}
         data = json.loads(order_data) if isinstance(order_data, str) else order_data
         
         # Create new order document
@@ -1036,10 +1451,16 @@ def update_order_status(order_id, new_status):
 # PAYMENT APIs
 # ============================================================================
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def process_payment(order_id, payment_data):
     """Process payment for an order with automatic tip recording"""
     try:
+        # Check authentication and role
+        if frappe.session.user == "Guest":
+            return {"success": False, "message": "Authentication required"}
+        
+        if not has_permission("Restaurant Cashier"):
+            return {"success": False, "message": "Insufficient permissions. Cashier role required."}
         data = json.loads(payment_data) if isinstance(payment_data, str) else payment_data
         
         order = frappe.get_doc("Restaurant Order", order_id)

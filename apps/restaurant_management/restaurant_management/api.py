@@ -30,6 +30,159 @@ def _error(message, code, status, errors=None, meta=None):
         None, status=status, message=message, code=code, errors=errors, meta=meta
     )
 
+# ============================================================================
+# AUTHENTICATION & AUTHORIZATION APIs
+# ============================================================================
+
+def get_current_user():
+    """Get current authenticated user"""
+    return frappe.session.user
+
+def has_permission(role_required, user=None):
+    """Check if user has required role"""
+    if not user:
+        user = get_current_user()
+    
+    if user == "Administrator":
+        return True
+    
+    user_roles = frappe.get_roles(user)
+    
+    # Role hierarchy (higher roles include lower role permissions)
+    role_hierarchy = {
+        "Restaurant Owner": ["Restaurant Manager", "Restaurant Staff", "Restaurant Kitchen", "Restaurant Cashier"],
+        "Restaurant Manager": ["Restaurant Staff", "Restaurant Kitchen", "Restaurant Cashier"],
+        "Restaurant Kitchen": [],
+        "Restaurant Staff": [],
+        "Restaurant Cashier": []
+    }
+    
+    # Check if user has the required role or a higher role
+    for user_role in user_roles:
+        if user_role == role_required:
+            return True
+        if user_role in role_hierarchy and role_required in role_hierarchy[user_role]:
+            return True
+    
+    return False
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+def login():
+    """Authenticate user and create session"""
+    try:
+        data = frappe.local.request.get_json() or {}
+        email = data.get("email")
+        password = data.get("password")
+        
+        if not email or not password:
+            return {
+                "success": False,
+                "message": "Email and password are required"
+            }
+        
+        # Check if user exists and is staff member
+        staff = frappe.db.get_value("Restaurant Staff", 
+            {"email": email, "employment_status": "Active"}, 
+            ["name", "full_name", "position", "department", "email"]
+        )
+        
+        if not staff:
+            return {
+                "success": False,
+                "message": "Invalid credentials or inactive account"
+            }
+        
+        # Authenticate with Frappe
+        from frappe.auth import LoginManager
+        login_manager = LoginManager()
+        login_manager.authenticate(email, password)
+        
+        if login_manager.user:
+            # Get user roles and staff info
+            user_roles = frappe.get_roles(email)
+            
+            return {
+                "success": True,
+                "message": "Login successful",
+                "data": {
+                    "user": email,
+                    "full_name": staff[1],
+                    "position": staff[2],
+                    "department": staff[3],
+                    "roles": user_roles,
+                    "session_id": frappe.session.sid
+                }
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Invalid credentials"
+            }
+            
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Login failed: {str(e)}"
+        }
+
+@frappe.whitelist()
+def logout():
+    """Logout current user"""
+    try:
+        frappe.local.login_manager.logout()
+        return {
+            "success": True,
+            "message": "Logged out successfully"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Logout failed: {str(e)}"
+        }
+
+@frappe.whitelist()
+def get_current_user_info():
+    """Get current user information"""
+    try:
+        user = get_current_user()
+        if user == "Guest":
+            return {
+                "success": False,
+                "message": "Not authenticated"
+            }
+        
+        # Get staff information
+        staff = frappe.db.get_value("Restaurant Staff", 
+            {"email": user}, 
+            ["staff_id", "full_name", "position", "department", "employment_status"],
+            as_dict=True
+        )
+        
+        if not staff:
+            return {
+                "success": False,
+                "message": "Staff record not found"
+            }
+        
+        return {
+            "success": True,
+            "data": {
+                "email": user,
+                "staff_id": staff.staff_id,
+                "full_name": staff.full_name,
+                "position": staff.position,
+                "department": staff.department,
+                "roles": frappe.get_roles(user),
+                "employment_status": staff.employment_status
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting user info: {str(e)}"
+        }
+
 # ——————————————————————————————————————————————————————————————
 # Test & Basic APIs
 # ——————————————————————————————————————————————————————————————
