@@ -285,10 +285,17 @@ function captureAndProcessFrame() {
         .then(data => {
             if (data.success && data.user_name) {
                 updateAttendanceStatus(data.user_name, data.action);
-            } else {
-                // Show no face detected
+            } else if (data.action === 'checkout_confirmation') {
+                // Show checkout confirmation dialog
+                showCheckoutConfirmation(data.user_name, data.message);
+            } else if (data.action === 'checkout_blocked') {
+                // Show blocked checkout message
                 statusDiv.className = 'alert alert-warning';
-                statusDiv.innerHTML = `<i class="fas fa-user-slash me-2"></i>No recognized face detected. Please position your face clearly in the camera.`;
+                statusDiv.innerHTML = `<i class="fas fa-clock me-2"></i>${data.message}`;
+            } else {
+                // Show no face detected or other error
+                statusDiv.className = 'alert alert-warning';
+                statusDiv.innerHTML = `<i class="fas fa-user-slash me-2"></i>${data.message || 'No recognized face detected. Please position your face clearly in the camera.'}`;
             }
         })
         .catch(error => {
@@ -297,6 +304,69 @@ function captureAndProcessFrame() {
             statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Error processing frame. Please try again.`;
         });
     }, 'image/jpeg');
+}
+
+// Show checkout confirmation dialog
+function showCheckoutConfirmation(userName, message) {
+    const statusDiv = document.getElementById('attendanceStatus');
+    statusDiv.className = 'alert alert-info';
+    statusDiv.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-question-circle me-2"></i>${message}
+            </div>
+            <div>
+                <button class="btn btn-success btn-sm me-2" onclick="confirmCheckout('${userName}')">
+                    <i class="fas fa-check me-1"></i>Yes, Check Out
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="cancelCheckout()">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Confirm checkout
+function confirmCheckout(userName) {
+    const statusDiv = document.getElementById('attendanceStatus');
+    statusDiv.className = 'alert alert-info';
+    statusDiv.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>Processing checkout...`;
+    
+    // Send force checkout request
+    fetch('/force_checkout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_name: userName,
+            confirm: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusDiv.className = 'alert alert-warning';
+            statusDiv.innerHTML = `<i class="fas fa-sign-out-alt me-2"></i>${data.message}`;
+            setTimeout(() => location.reload(), 3000);
+        } else {
+            statusDiv.className = 'alert alert-danger';
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${data.message}`;
+        }
+    })
+    .catch(error => {
+        console.error('Error confirming checkout:', error);
+        statusDiv.className = 'alert alert-danger';
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Error confirming checkout. Please try again.`;
+    });
+}
+
+// Cancel checkout
+function cancelCheckout() {
+    const statusDiv = document.getElementById('attendanceStatus');
+    statusDiv.className = 'alert alert-secondary';
+    statusDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i>Checkout cancelled. Continue working!`;
 }
 
 // Update attendance status

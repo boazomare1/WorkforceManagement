@@ -288,12 +288,25 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                <span class="badge bg-success">
-                                                    <i class="fas fa-check me-1"></i>Active
-                                                </span>
+                                                {% if user[2] %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>Has Face
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-exclamation me-1"></i>No Face
+                                                    </span>
+                                                {% endif %}
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm" role="group">
+                                                    {% if not user[2] %}
+                                                    <button type="button" class="btn btn-outline-success" 
+                                                            onclick="captureFace({{ user[0] }}, '{{ user[1] }}')"
+                                                            title="Capture Face">
+                                                        <i class="fas fa-camera"></i>
+                                                    </button>
+                                                    {% endif %}
                                                     <button type="button" class="btn btn-outline-primary" 
                                                             onclick="viewUser({{ user[0] }}, '{{ user[1] }}')">
                                                         <i class="fas fa-eye"></i>
@@ -365,6 +378,106 @@
         // View user details
         function viewUser(userId, userName) {
             alert('View details for user ' + userName + ' (ID: ' + userId + ') - Feature coming soon!');
+        }
+        
+        // Capture face for user
+        function captureFace(userId, userName) {
+            // Create a simple face capture modal
+            const captureModal = document.createElement('div');
+            captureModal.innerHTML = `
+                <div class="modal fade" id="captureModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-camera me-2"></i>Capture Face for ${userName}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div class="mb-3">
+                                    <video id="camera-stream" width="400" height="300" autoplay style="border: 2px solid #ddd; border-radius: 10px;"></video>
+                                </div>
+                                <canvas id="capture-canvas" width="400" height="300" style="display: none;"></canvas>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-success btn-lg" onclick="takePicture(${userId}, '${userName}')">
+                                        <i class="fas fa-camera me-2"></i>Take Picture
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="stopCamera()" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(captureModal);
+            
+            const modal = new bootstrap.Modal(document.getElementById('captureModal'));
+            modal.show();
+            
+            // Start camera
+            startCamera();
+        }
+        
+        let videoStream = null;
+        
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    videoStream = stream;
+                    const video = document.getElementById('camera-stream');
+                    video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    alert('Error accessing camera: ' + err.message);
+                });
+        }
+        
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+        
+        function takePicture(userId, userName) {
+            const video = document.getElementById('camera-stream');
+            const canvas = document.getElementById('capture-canvas');
+            const context = canvas.getContext('2d');
+            
+            // Draw the video frame to the canvas
+            context.drawImage(video, 0, 0, 400, 300);
+            
+            // Convert canvas to blob
+            canvas.toBlob(function(blob) {
+                const formData = new FormData();
+                formData.append('face_image', blob, 'face.jpg');
+                formData.append('user_id', userId);
+                
+                // Upload the image
+                fetch('/capture_face_web', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Face captured successfully for ' + userName + '!');
+                        location.reload(); // Refresh the page to show updated status
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error uploading face: ' + error.message);
+                })
+                .finally(() => {
+                    stopCamera();
+                    bootstrap.Modal.getInstance(document.getElementById('captureModal')).hide();
+                });
+            }, 'image/jpeg');
         }
         
         // Edit user

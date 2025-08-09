@@ -1,0 +1,1048 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Face Recognition System{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --primary-dark: #3730a3;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --dark-color: #1f2937;
+        --light-color: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--text-primary);
+    }
+
+    .admin-container {
+        background: var(--light-color);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        margin: 20px;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .admin-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transform: translate(30px, -30px);
+    }
+
+    .admin-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        transform: translate(-50px, 50px);
+    }
+
+    .admin-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .admin-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 8px 0 0 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .system-status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .status-indicator {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .status-online { background-color: #10b981; }
+    .status-warning { background-color: #f59e0b; }
+    .status-offline { background-color: #ef4444; }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin: 30px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .stat-card.primary::before { background: var(--primary-color); }
+    .stat-card.success::before { background: var(--success-color); }
+    .stat-card.warning::before { background: var(--warning-color); }
+    .stat-card.danger::before { background: var(--danger-color); }
+
+    .stat-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        font-size: 20px;
+    }
+
+    .stat-card.primary .stat-card-icon { background: rgba(79, 70, 229, 0.1); color: var(--primary-color); }
+    .stat-card.success .stat-card-icon { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+    .stat-card.warning .stat-card-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .stat-card.danger .stat-card-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+
+    .stat-card-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .stat-card-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .nav-tabs {
+        border: none;
+        margin: 0 30px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        border-radius: 0;
+        color: var(--text-secondary);
+        font-weight: 500;
+        padding: 16px 24px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: var(--primary-color);
+        background: none;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        background: none;
+        border: none;
+    }
+
+    .nav-tabs .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--primary-color);
+        border-radius: 2px 2px 0 0;
+    }
+
+    .tab-content {
+        border: none;
+        padding: 40px 30px;
+        background: transparent;
+    }
+
+    .setting-group {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .setting-group-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .setting-group-title i {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .setting-item {
+        margin-bottom: 24px;
+        padding: 20px;
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        transition: all 0.3s ease;
+    }
+
+    .setting-item:hover {
+        background: #f1f5f9;
+    }
+
+    .setting-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-label small {
+        font-weight: 400;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .form-check-label {
+        margin-left: 12px;
+        font-weight: 500;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+        font-weight: 500;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        border: none;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        box-shadow: var(--shadow-md);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #4b5563;
+        color: white;
+    }
+
+    .btn-info {
+        background: var(--info-color);
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-warning {
+        background: var(--warning-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+        color: white;
+    }
+
+    .btn-success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+        color: white;
+    }
+
+    .btn-danger {
+        background: var(--danger-color);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .logs-container {
+        max-height: 500px;
+        overflow-y: auto;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: var(--radius-md);
+        padding: 20px;
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+        font-size: 13px;
+        color: #e2e8f0;
+        line-height: 1.5;
+    }
+
+    .logs-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .logs-container::-webkit-scrollbar-track {
+        background: #374151;
+        border-radius: 4px;
+    }
+
+    .logs-container::-webkit-scrollbar-thumb {
+        background: #6b7280;
+        border-radius: 4px;
+    }
+
+    .table {
+        background: white;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--text-primary);
+        border: none;
+        padding: 16px;
+    }
+
+    .table td {
+        padding: 16px;
+        border: none;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .alert {
+        border: none;
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #065f46;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #991b1b;
+        border-left: 4px solid var(--danger-color);
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+        .admin-container {
+            margin: 10px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+            margin: 20px;
+        }
+        
+        .tab-content {
+            padding: 20px 15px;
+        }
+        
+        .setting-group {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Header Section -->
+    <div class="admin-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="admin-title">
+                    <i class="fas fa-shield-alt me-3"></i>Admin Control Center
+                </h1>
+                <p class="admin-subtitle">Face Recognition Attendance System Management</p>
+            </div>
+            <div class="system-status">
+                <span class="status-indicator status-{{ system_status }}"></span>
+                <span>System {{ system_status.title() }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-card-value">{{ stats.total_users }}</div>
+            <p class="stat-card-label">Total Users</p>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-card-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="stat-card-value">{{ stats.users_with_faces }}</div>
+            <p class="stat-card-label">Users with Faces</p>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-card-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-card-value">{{ stats.today_checkins }}</div>
+            <p class="stat-card-label">Today's Check-ins</p>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-card-value">{{ stats.system_uptime }}</div>
+            <p class="stat-card-label">System Uptime</p>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Admin Tabs -->
+    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                <i class="fas fa-sliders-h me-2"></i>Settings
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                <i class="fas fa-users me-2"></i>User Management
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab">
+                <i class="fas fa-server me-2"></i>System Info
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab">
+                <i class="fas fa-database me-2"></i>Backup & Restore
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
+                <i class="fas fa-file-alt me-2"></i>System Logs
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabContent">
+        <!-- Settings Tab -->
+        <div class="tab-pane fade show active" id="settings" role="tabpanel">
+            <form method="POST" action="{{ url_for('admin_update_settings') }}">
+                <!-- Face Recognition Settings -->
+                <div class="setting-group">
+                    <h5 class="setting-group-title">
+                        <i class="fas fa-camera" style="background: rgba(79, 70, 229, 0.1); color: var(--primary-color);"></i>
+                        Face Recognition Settings
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <label for="face_tolerance" class="form-label">
+                            <strong>Face Recognition Tolerance</strong>
+                            <small class="text-muted d-block">Lower values = stricter matching (0.1 - 1.0)</small>
+                        </label>
+                        <input type="number" class="form-control" id="face_tolerance" name="face_tolerance" 
+                               value="{{ settings.face_tolerance }}" min="0.1" max="1.0" step="0.05">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="face_detection_cooldown" class="form-label">
+                            <strong>Face Detection Cooldown</strong>
+                            <small class="text-muted d-block">Seconds between detections for same user (0-300)</small>
+                        </label>
+                        <input type="number" class="form-control" id="face_detection_cooldown" name="face_detection_cooldown" 
+                               value="{{ settings.face_detection_cooldown }}" min="0" max="300">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="instant_mode" name="instant_mode" 
+                                   {{ 'checked' if settings.instant_mode else '' }}>
+                            <label class="form-check-label" for="instant_mode">
+                                <strong>Instant Mode</strong>
+                                <small class="text-muted d-block">Enable instant check-in/out without confirmation</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Rules -->
+                <div class="setting-group">
+                    <h5 class="setting-group-title">
+                        <i class="fas fa-clock" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);"></i>
+                        Attendance Rules
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <label for="minimum_work_hours" class="form-label">
+                            <strong>Minimum Work Hours</strong>
+                            <small class="text-muted d-block">Minimum hours before allowing checkout (0.1 - 24.0)</small>
+                        </label>
+                        <input type="number" class="form-control" id="minimum_work_hours" name="minimum_work_hours" 
+                               value="{{ settings.minimum_work_hours }}" min="0.1" max="24.0" step="0.1">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="overtime_threshold" class="form-label">
+                            <strong>Overtime Threshold</strong>
+                            <small class="text-muted d-block">Hours after which overtime is triggered (1.0 - 24.0)</small>
+                        </label>
+                        <input type="number" class="form-control" id="overtime_threshold" name="overtime_threshold" 
+                               value="{{ settings.overtime_threshold }}" min="1.0" max="24.0" step="0.5">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="late_arrival_threshold" class="form-label">
+                            <strong>Late Arrival Threshold</strong>
+                            <small class="text-muted d-block">Minutes late before flagging as late arrival (1-120)</small>
+                        </label>
+                        <input type="number" class="form-control" id="late_arrival_threshold" name="late_arrival_threshold" 
+                               value="{{ settings.late_arrival_threshold }}" min="1" max="120">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="grace_period" class="form-label">
+                            <strong>Grace Period</strong>
+                            <small class="text-muted d-block">Minutes of grace period for attendance (0-60)</small>
+                        </label>
+                        <input type="number" class="form-control" id="grace_period" name="grace_period" 
+                               value="{{ settings.grace_period }}" min="0" max="60">
+                    </div>
+                </div>
+
+                <!-- System Settings -->
+                <div class="setting-group">
+                    <h5 class="setting-group-title">
+                        <i class="fas fa-cog" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);"></i>
+                        System Settings
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <label for="system_name" class="form-label">
+                            <strong>System Name</strong>
+                        </label>
+                        <input type="text" class="form-control" id="system_name" name="system_name" 
+                               value="{{ settings.system_name }}">
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="company_name" class="form-label">
+                            <strong>Company Name</strong>
+                        </label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" 
+                               value="{{ settings.company_name }}">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="debug_mode" name="debug_mode" 
+                                   {{ 'checked' if settings.debug_mode else '' }}>
+                            <label class="form-check-label" for="debug_mode">
+                                <strong>Debug Mode</strong>
+                                <small class="text-muted d-block">Enable detailed logging and debugging</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetToDefaults()">
+                        <i class="fas fa-undo me-2"></i>Reset to Defaults
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="exportSettings()">
+                        <i class="fas fa-download me-2"></i>Export Settings
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-upload me-2"></i>Import Settings
+                    </button>
+                </div>
+            </form>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importSettings(this)">
+        </div>
+
+        <!-- User Management Tab -->
+        <div class="tab-pane fade" id="users" role="tabpanel">
+            <div class="setting-group">
+                <h5 class="setting-group-title">
+                    <i class="fas fa-users-cog" style="background: rgba(59, 130, 246, 0.1); color: var(--info-color);"></i>
+                    Bulk User Operations
+                </h5>
+                <p class="text-muted mb-4">Manage multiple users at once with these bulk operations.</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-user-plus me-2"></i>Add Multiple Users</h6>
+                            <p class="text-muted small mb-3">Import users from CSV file or add multiple users at once.</p>
+                            <button class="btn btn-success" onclick="bulkAddUsers()">
+                                <i class="fas fa-upload me-2"></i>Import Users
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-download me-2"></i>Export Data</h6>
+                            <p class="text-muted small mb-3">Download user list and attendance data.</p>
+                            <button class="btn btn-info" onclick="exportUserList()">
+                                <i class="fas fa-file-export me-2"></i>Export Users
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-sync-alt me-2"></i>Reset Face Data</h6>
+                            <p class="text-muted small mb-3">Clear all face encodings for fresh start.</p>
+                            <button class="btn btn-warning" onclick="resetAllFaces()">
+                                <i class="fas fa-user-times me-2"></i>Reset Faces
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h6>
+                            <p class="text-muted small mb-3">Permanently delete all system data.</p>
+                            <button class="btn btn-danger" onclick="clearAllData()">
+                                <i class="fas fa-trash me-2"></i>Clear All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info Tab -->
+        <div class="tab-pane fade" id="system" role="tabpanel">
+            <div class="setting-group">
+                <h5 class="setting-group-title">
+                    <i class="fas fa-server" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);"></i>
+                    System Information
+                </h5>
+                <p class="text-muted mb-4">Current system status and configuration details.</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-code-branch me-2"></i>System Version</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.version }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fab fa-python me-2"></i>Python Version</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.python_version }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-database me-2"></i>Database Size</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.db_size }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-user-check me-2"></i>Face Encodings</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.face_encodings_count }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-clock me-2"></i>System Uptime</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.uptime }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="setting-item">
+                            <h6><i class="fas fa-archive me-2"></i>Last Backup</h6>
+                            <p class="mb-0 fw-bold">{{ system_info.last_backup or 'Never' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup & Restore Tab -->
+        <div class="tab-pane fade" id="backup" role="tabpanel">
+            <div class="setting-group">
+                <h5 class="setting-group-title">
+                    <i class="fas fa-shield-alt" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);"></i>
+                    Database Backup & Restore
+                </h5>
+                <p class="text-muted mb-4">Protect your data with regular backups and restore capabilities.</p>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="setting-item text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-cloud-download-alt" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            </div>
+                            <h6>Create Backup</h6>
+                            <p class="text-muted small mb-3">Generate a complete backup of your database and settings.</p>
+                            <button class="btn btn-primary w-100" onclick="createBackup()">
+                                <i class="fas fa-database me-2"></i>Create Backup
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="setting-item text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--success-color);"></i>
+                            </div>
+                            <h6>Restore Data</h6>
+                            <p class="text-muted small mb-3">Restore from a previous backup file.</p>
+                            <button class="btn btn-success w-100" onclick="document.getElementById('restoreFile').click()">
+                                <i class="fas fa-upload me-2"></i>Restore Backup
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="setting-item text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-file-alt" style="font-size: 2rem; color: var(--info-color);"></i>
+                            </div>
+                            <h6>System Logs</h6>
+                            <p class="text-muted small mb-3">Download system logs for troubleshooting.</p>
+                            <button class="btn btn-info w-100" onclick="downloadLogs()">
+                                <i class="fas fa-file-download me-2"></i>Download Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="file" id="restoreFile" style="display: none;" accept=".db,.json" onchange="restoreBackup(this)">
+                
+                <div class="setting-item mt-4">
+                    <h6><i class="fas fa-history me-2"></i>Recent Backups</h6>
+                    <div id="backup-list" class="mt-3">
+                        <div class="empty-state">
+                            <i class="fas fa-archive"></i>
+                            <p>No backups found. Create your first backup above.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs Tab -->
+        <div class="tab-pane fade" id="logs" role="tabpanel">
+            <div class="setting-group">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="setting-group-title mb-2">
+                            <i class="fas fa-terminal" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);"></i>
+                            System Logs
+                        </h5>
+                        <p class="text-muted mb-0">Real-time system activity and error logs.</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-primary me-2" onclick="refreshLogs()">
+                            <i class="fas fa-sync me-1"></i>Refresh
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="clearLogs()">
+                            <i class="fas fa-trash me-1"></i>Clear Logs
+                        </button>
+                    </div>
+                </div>
+                <div class="logs-container" id="logs-container">
+                    <div class="d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <div class="text-center text-muted">
+                            <div class="loading-spinner mb-2"></div>
+                            <p class="mb-0">Loading system logs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh stats every 30 seconds
+setInterval(function() {
+    fetch('/admin/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stats display
+                updateStats(data.stats);
+            }
+        })
+        .catch(error => console.error('Error fetching stats:', error));
+}, 30000);
+
+function updateStats(stats) {
+    // Update stat cards with new data
+    // Implementation will be added
+}
+
+function resetToDefaults() {
+    if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+        fetch('/admin/reset_settings', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+}
+
+function exportSettings() {
+    window.location.href = '/admin/export_settings';
+}
+
+function importSettings(input) {
+    if (input.files && input.files[0]) {
+        const formData = new FormData();
+        formData.append('settings_file', input.files[0]);
+        
+        fetch('/admin/import_settings', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Settings imported successfully!');
+                location.reload();
+            } else {
+                alert('Error importing settings: ' + data.message);
+            }
+        });
+    }
+}
+
+function createBackup() {
+    fetch('/admin/create_backup', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Backup created successfully!');
+                loadBackupList();
+            } else {
+                alert('Error creating backup: ' + data.message);
+            }
+        });
+}
+
+function refreshLogs() {
+    fetch('/admin/logs')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('logs-container').innerHTML = data.logs;
+            }
+        });
+}
+
+// Load initial data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    refreshLogs();
+});
+</script>
+{% endblock %}

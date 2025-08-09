@@ -191,4 +191,31 @@ class AttendanceDatabase:
         cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
         
         conn.commit()
-        conn.close() 
+        conn.close()
+    
+    def update_user_face_encoding(self, user_id, face_encoding):
+        """Update face encoding for existing user"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Convert numpy array to string
+            encoding_str = ','.join([str(x) for x in face_encoding])
+            
+            # Update user face encoding
+            cursor.execute('''
+                UPDATE users 
+                SET face_encoding = ?
+                WHERE id = ?
+            ''', (encoding_str, user_id))
+            
+            success = cursor.rowcount > 0
+            
+            conn.commit()
+            conn.close()
+            
+            return success
+            
+        except Exception as e:
+            print(f"Error updating face encoding: {e}")
+            return False 
