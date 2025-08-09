@@ -1,0 +1,198 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "booking_id",
+  "customer_name",
+  "customer_phone",
+  "customer_email",
+  "booking_date",
+  "booking_time",
+  "party_size",
+  "duration_hours",
+  "table_number",
+  "table_zone",
+  "booking_status",
+  "special_requests",
+  "dietary_requirements",
+  "occasion",
+  "preferred_seating",
+  "deposit_required",
+  "deposit_amount",
+  "booking_source",
+  "actual_arrival_time",
+  "actual_departure_time",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "booking_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Booking ID",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Customer Email"
+  },
+  {
+   "fieldname": "booking_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Booking Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "booking_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Booking Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_size",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Party Size",
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration_hours",
+   "fieldtype": "Float",
+   "label": "Duration (Hours)",
+   "default": "2.0"
+  },
+  {
+   "fieldname": "table_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Table Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "table_zone",
+   "fieldtype": "Select",
+   "label": "Table Zone",
+   "options": "Main Dining\nVIP Section\nTerrace\nBar Area\nPrivate Dining"
+  },
+  {
+   "fieldname": "booking_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Booking Status",
+   "options": "Confirmed\nSeated\nCompleted\nCancelled\nNo-Show",
+   "default": "Confirmed"
+  },
+  {
+   "fieldname": "special_requests",
+   "fieldtype": "Small Text",
+   "label": "Special Requests"
+  },
+  {
+   "fieldname": "dietary_requirements",
+   "fieldtype": "Small Text",
+   "label": "Dietary Requirements"
+  },
+  {
+   "fieldname": "occasion",
+   "fieldtype": "Select",
+   "label": "Occasion",
+   "options": "\nBirthday\nAnniversary\nBusiness Meeting\nDate Night\nFamily Gathering\nCelebration\nOther"
+  },
+  {
+   "fieldname": "preferred_seating",
+   "fieldtype": "Select",
+   "label": "Preferred Seating",
+   "options": "\nWindow View\nQuiet Area\nNear Kitchen\nOutdoor\nPrivate\nBar Seating"
+  },
+  {
+   "fieldname": "deposit_required",
+   "fieldtype": "Check",
+   "label": "Deposit Required"
+  },
+  {
+   "fieldname": "deposit_amount",
+   "fieldtype": "Currency",
+   "label": "Deposit Amount"
+  },
+  {
+   "fieldname": "booking_source",
+   "fieldtype": "Select",
+   "label": "Booking Source",
+   "options": "Walk-in\nPhone\nOnline\nApp\nThird Party",
+   "default": "Walk-in"
+  },
+  {
+   "fieldname": "actual_arrival_time",
+   "fieldtype": "Time",
+   "label": "Actual Arrival Time"
+  },
+  {
+   "fieldname": "actual_departure_time",
+   "fieldtype": "Time",
+   "label": "Actual Departure Time"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Long Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Table Booking",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,185 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "advance_id",
+  "staff_id",
+  "staff_name",
+  "amount_requested",
+  "amount_approved",
+  "amount_repaid",
+  "reason",
+  "request_date",
+  "request_time",
+  "status",
+  "approved_by",
+  "approval_date",
+  "approval_notes",
+  "deduction_installments",
+  "deduction_start_date",
+  "expected_deduction_start",
+  "emergency_request",
+  "supporting_documents",
+  "requested_by",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "advance_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Advance ID",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "staff_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Staff ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "staff_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Staff Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_requested",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount Requested",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_approved",
+   "fieldtype": "Currency",
+   "label": "Amount Approved"
+  },
+  {
+   "fieldname": "amount_repaid",
+   "fieldtype": "Currency",
+   "label": "Amount Repaid",
+   "default": "0"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason for Advance",
+   "reqd": 1
+  },
+  {
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "request_time",
+   "fieldtype": "Time",
+   "label": "Request Time"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nApproved\nRejected\nPartially Repaid\nFully Repaid",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Data",
+   "label": "Approved By"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "approval_notes",
+   "fieldtype": "Small Text",
+   "label": "Approval Notes"
+  },
+  {
+   "fieldname": "deduction_installments",
+   "fieldtype": "Int",
+   "label": "Deduction Installments",
+   "default": "1"
+  },
+  {
+   "fieldname": "deduction_start_date",
+   "fieldtype": "Date",
+   "label": "Deduction Start Date"
+  },
+  {
+   "fieldname": "expected_deduction_start",
+   "fieldtype": "Date",
+   "label": "Expected Deduction Start"
+  },
+  {
+   "fieldname": "emergency_request",
+   "fieldtype": "Check",
+   "label": "Emergency Request"
+  },
+  {
+   "fieldname": "supporting_documents",
+   "fieldtype": "Long Text",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Data",
+   "label": "Requested By"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Long Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Staff Advance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

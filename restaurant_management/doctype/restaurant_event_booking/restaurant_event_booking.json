@@ -1,0 +1,235 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 12:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "event_id",
+    "event_type",
+    "event_name",
+    "host_name",
+    "host_contact",
+    "host_email",
+    "event_date",
+    "event_time",
+    "duration_hours",
+    "expected_guests",
+    "private_dining_room",
+    "special_requirements",
+    "menu_preferences",
+    "dietary_restrictions",
+    "decoration_requests",
+    "av_requirements",
+    "budget_range",
+    "deposit_amount",
+    "deposit_status",
+    "final_cost",
+    "payment_status",
+    "event_status",
+    "assigned_staff",
+    "event_coordinator",
+    "setup_time",
+    "cleanup_time",
+    "notes",
+    "internal_notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "event_id",
+      "fieldtype": "Data",
+      "label": "Event ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "event_type",
+      "fieldtype": "Select",
+      "label": "Event Type",
+      "options": "Birthday Party\nAnniversary Celebration\nCorporate Event\nWedding Reception\nPrivate Dining\nWine Tasting\nChef's Table\nHoliday Party\nGraduation\nBusiness Meeting\nProduct Launch\nCustom Event",
+      "reqd": 1
+    },
+    {
+      "fieldname": "event_name",
+      "fieldtype": "Data",
+      "label": "Event Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "host_name",
+      "fieldtype": "Data",
+      "label": "Host Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "host_contact",
+      "fieldtype": "Data",
+      "label": "Host Contact Number",
+      "reqd": 1
+    },
+    {
+      "fieldname": "host_email",
+      "fieldtype": "Data",
+      "label": "Host Email"
+    },
+    {
+      "fieldname": "event_date",
+      "fieldtype": "Date",
+      "label": "Event Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "event_time",
+      "fieldtype": "Time",
+      "label": "Event Start Time",
+      "reqd": 1
+    },
+    {
+      "fieldname": "duration_hours",
+      "fieldtype": "Float",
+      "label": "Duration (Hours)",
+      "default": 3.0
+    },
+    {
+      "fieldname": "expected_guests",
+      "fieldtype": "Int",
+      "label": "Expected Number of Guests",
+      "reqd": 1
+    },
+    {
+      "fieldname": "private_dining_room",
+      "fieldtype": "Select",
+      "label": "Private Dining Room",
+      "options": "Main Private Room\nVIP Suite\nWine Cellar Room\nChef's Table\nOutdoor Terrace\nRooftop Space\nNo Room Preference"
+    },
+    {
+      "fieldname": "special_requirements",
+      "fieldtype": "Text",
+      "label": "Special Requirements"
+    },
+    {
+      "fieldname": "menu_preferences",
+      "fieldtype": "Text",
+      "label": "Menu Preferences"
+    },
+    {
+      "fieldname": "dietary_restrictions",
+      "fieldtype": "Text",
+      "label": "Dietary Restrictions"
+    },
+    {
+      "fieldname": "decoration_requests",
+      "fieldtype": "Text",
+      "label": "Decoration Requests"
+    },
+    {
+      "fieldname": "av_requirements",
+      "fieldtype": "Text",
+      "label": "Audio/Visual Requirements"
+    },
+    {
+      "fieldname": "budget_range",
+      "fieldtype": "Select",
+      "label": "Budget Range",
+      "options": "$500-$1000\n$1000-$2500\n$2500-$5000\n$5000-$10000\n$10000+\nOpen Budget"
+    },
+    {
+      "fieldname": "deposit_amount",
+      "fieldtype": "Currency",
+      "label": "Deposit Amount"
+    },
+    {
+      "fieldname": "deposit_status",
+      "fieldtype": "Select",
+      "label": "Deposit Status",
+      "options": "Pending\nPaid\nRefunded",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "final_cost",
+      "fieldtype": "Currency",
+      "label": "Final Event Cost"
+    },
+    {
+      "fieldname": "payment_status",
+      "fieldtype": "Select",
+      "label": "Payment Status",
+      "options": "Pending\nDeposit Paid\nFully Paid\nOverdue",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "event_status",
+      "fieldtype": "Select",
+      "label": "Event Status",
+      "options": "Inquiry\nProposal Sent\nBooked\nConfirmed\nIn Progress\nCompleted\nCancelled",
+      "default": "Inquiry"
+    },
+    {
+      "fieldname": "assigned_staff",
+      "fieldtype": "Text",
+      "label": "Assigned Staff (JSON Array)"
+    },
+    {
+      "fieldname": "event_coordinator",
+      "fieldtype": "Data",
+      "label": "Event Coordinator"
+    },
+    {
+      "fieldname": "setup_time",
+      "fieldtype": "Time",
+      "label": "Setup Start Time"
+    },
+    {
+      "fieldname": "cleanup_time",
+      "fieldtype": "Time",
+      "label": "Cleanup End Time"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Client Notes"
+    },
+    {
+      "fieldname": "internal_notes",
+      "fieldtype": "Text",
+      "label": "Internal Staff Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 12:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Event Booking",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "event_name"
+}

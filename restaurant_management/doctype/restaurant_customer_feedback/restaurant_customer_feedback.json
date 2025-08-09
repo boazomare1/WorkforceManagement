@@ -1,0 +1,244 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 12:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "feedback_id",
+    "customer_id",
+    "order_id",
+    "table_number",
+    "visit_date",
+    "feedback_type",
+    "overall_rating",
+    "food_quality_rating",
+    "service_rating",
+    "ambiance_rating",
+    "value_rating",
+    "speed_rating",
+    "staff_member_mentioned",
+    "positive_comments",
+    "negative_comments",
+    "suggestions",
+    "would_recommend",
+    "likelihood_to_return",
+    "feedback_source",
+    "response_required",
+    "management_response",
+    "response_date",
+    "response_by",
+    "follow_up_required",
+    "follow_up_date",
+    "status",
+    "priority",
+    "category_tags",
+    "internal_notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "feedback_id",
+      "fieldtype": "Data",
+      "label": "Feedback ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "customer_id",
+      "fieldtype": "Data",
+      "label": "Customer ID"
+    },
+    {
+      "fieldname": "order_id",
+      "fieldtype": "Data",
+      "label": "Order ID"
+    },
+    {
+      "fieldname": "table_number",
+      "fieldtype": "Data",
+      "label": "Table Number"
+    },
+    {
+      "fieldname": "visit_date",
+      "fieldtype": "Date",
+      "label": "Visit Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "feedback_type",
+      "fieldtype": "Select",
+      "label": "Feedback Type",
+      "options": "General Review\nCompliment\nComplaint\nSuggestion\nFood Issue\nService Issue\nBilling Issue\nAmbiance Feedback\nStaff Recognition",
+      "reqd": 1
+    },
+    {
+      "fieldname": "overall_rating",
+      "fieldtype": "Select",
+      "label": "Overall Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent",
+      "reqd": 1
+    },
+    {
+      "fieldname": "food_quality_rating",
+      "fieldtype": "Select",
+      "label": "Food Quality Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent"
+    },
+    {
+      "fieldname": "service_rating",
+      "fieldtype": "Select",
+      "label": "Service Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent"
+    },
+    {
+      "fieldname": "ambiance_rating",
+      "fieldtype": "Select",
+      "label": "Ambiance Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent"
+    },
+    {
+      "fieldname": "value_rating",
+      "fieldtype": "Select",
+      "label": "Value for Money Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent"
+    },
+    {
+      "fieldname": "speed_rating",
+      "fieldtype": "Select",
+      "label": "Service Speed Rating",
+      "options": "1 - Poor\n2 - Fair\n3 - Good\n4 - Very Good\n5 - Excellent"
+    },
+    {
+      "fieldname": "staff_member_mentioned",
+      "fieldtype": "Data",
+      "label": "Staff Member Mentioned"
+    },
+    {
+      "fieldname": "positive_comments",
+      "fieldtype": "Text",
+      "label": "Positive Comments"
+    },
+    {
+      "fieldname": "negative_comments",
+      "fieldtype": "Text",
+      "label": "Negative Comments/Issues"
+    },
+    {
+      "fieldname": "suggestions",
+      "fieldtype": "Text",
+      "label": "Suggestions for Improvement"
+    },
+    {
+      "fieldname": "would_recommend",
+      "fieldtype": "Select",
+      "label": "Would Recommend to Others",
+      "options": "Yes\nNo\nMaybe"
+    },
+    {
+      "fieldname": "likelihood_to_return",
+      "fieldtype": "Select",
+      "label": "Likelihood to Return",
+      "options": "Very Likely\nLikely\nNeutral\nUnlikely\nVery Unlikely"
+    },
+    {
+      "fieldname": "feedback_source",
+      "fieldtype": "Select",
+      "label": "Feedback Source",
+      "options": "In-Person\nPhone Call\nEmail\nWebsite\nSocial Media\nThird-party Review\nTablet Survey\nMobile App",
+      "default": "In-Person"
+    },
+    {
+      "fieldname": "response_required",
+      "fieldtype": "Check",
+      "label": "Response Required",
+      "default": 0
+    },
+    {
+      "fieldname": "management_response",
+      "fieldtype": "Text",
+      "label": "Management Response"
+    },
+    {
+      "fieldname": "response_date",
+      "fieldtype": "Date",
+      "label": "Response Date"
+    },
+    {
+      "fieldname": "response_by",
+      "fieldtype": "Data",
+      "label": "Response By (Staff)"
+    },
+    {
+      "fieldname": "follow_up_required",
+      "fieldtype": "Check",
+      "label": "Follow-up Required",
+      "default": 0
+    },
+    {
+      "fieldname": "follow_up_date",
+      "fieldtype": "Date",
+      "label": "Follow-up Date"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "New\nUnder Review\nResponded\nResolved\nEscalated\nClosed",
+      "default": "New"
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Select",
+      "label": "Priority",
+      "options": "Low\nMedium\nHigh\nUrgent",
+      "default": "Medium"
+    },
+    {
+      "fieldname": "category_tags",
+      "fieldtype": "Text",
+      "label": "Category Tags (JSON)"
+    },
+    {
+      "fieldname": "internal_notes",
+      "fieldtype": "Text",
+      "label": "Internal Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 12:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Customer Feedback",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "feedback_id"
+}

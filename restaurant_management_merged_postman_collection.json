@@ -540,6 +540,185 @@
               "path": ["api", "method", "restaurant_management.api.update_order_status"]
             }
           }
+        },
+        {
+          "name": "Modify Order - Add Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"modifications\": {\n    \"action\": \"add_item\",\n    \"item_name\": \"Grilled Chicken\",\n    \"quantity\": 1,\n    \"unit_price\": 18.99,\n    \"special_instructions\": \"Extra spicy\",\n    \"pricing_context\": \"standard\",\n    \"staff_member\": \"STAFF-2024-0001\",\n    \"reason\": \"Customer added to order\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.modify_order"]
+            }
+          }
+        },
+        {
+          "name": "Modify Order - Remove Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"modifications\": {\n    \"action\": \"remove_item\",\n    \"item_name\": \"French Fries\",\n    \"staff_member\": \"STAFF-2024-0001\",\n    \"reason\": \"Customer changed mind\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.modify_order"]
+            }
+          }
+        },
+        {
+          "name": "Modify Order - Change Quantity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"modifications\": {\n    \"action\": \"change_quantity\",\n    \"item_name\": \"Caesar Salad\",\n    \"new_quantity\": 3,\n    \"staff_member\": \"STAFF-2024-0001\",\n    \"reason\": \"Customer wants extra portions\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.modify_order"]
+            }
+          }
+        },
+        {
+          "name": "Apply VIP Pricing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"modifications\": {\n    \"action\": \"apply_pricing_context\",\n    \"pricing_context\": \"vip\",\n    \"table_type\": \"private_dining\",\n    \"staff_member\": \"STAFF-2024-0001\",\n    \"reason\": \"Customer upgraded to VIP room\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.modify_order"]
+            }
+          }
+        },
+        {
+          "name": "Apply Happy Hour Pricing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"modifications\": {\n    \"action\": \"apply_pricing_context\",\n    \"pricing_context\": \"happy_hour\",\n    \"staff_member\": \"STAFF-2024-0001\",\n    \"reason\": \"Applied happy hour discount\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.modify_order"]
+            }
+          }
+        },
+        {
+          "name": "Get Order Modification History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_modification_history?order_id=ORD-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_order_modification_history"],
+              "query": [
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generate Final Receipt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.generate_final_receipt?order_id=ORD-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.generate_final_receipt"],
+              "query": [
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Dynamic Price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_dynamic_price?item_name=Grilled Chicken&pricing_context=vip&table_type=private_dining",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_dynamic_price"],
+              "query": [
+                {
+                  "key": "item_name",
+                  "value": "Grilled Chicken"
+                },
+                {
+                  "key": "pricing_context",
+                  "value": "vip"
+                },
+                {
+                  "key": "table_type",
+                  "value": "private_dining"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Pricing Contexts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_pricing_contexts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_pricing_contexts"]
+            }
+          }
         }
       ]
     },
@@ -657,6 +836,923 @@
               "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_stats",
               "host": ["{{base_url}}"],
               "path": ["api", "method", "restaurant_management.api.get_staff_stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Table Booking & Reservations",
+      "item": [
+        {
+          "name": "Create Table Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"John Smith\",\n  \"customer_phone\": \"+1234567890\",\n  \"customer_email\": \"john.smith@email.com\",\n  \"booking_date\": \"2024-01-20\",\n  \"booking_time\": \"19:00\",\n  \"party_size\": 4,\n  \"duration_hours\": 2,\n  \"preferred_zone\": \"Main Dining\",\n  \"special_requirements\": \"Window View\",\n  \"special_requests\": \"Birthday celebration\",\n  \"dietary_requirements\": \"Vegetarian options needed\",\n  \"occasion\": \"Birthday\",\n  \"preferred_seating\": \"Window View\",\n  \"booking_source\": \"Online\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_table_booking",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_table_booking"]
+            }
+          }
+        },
+        {
+          "name": "Check Table Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_available_tables?booking_date=2024-01-20&booking_time=19:00&party_size=4&preferred_zone=VIP Section",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_available_tables"],
+              "query": [
+                {
+                  "key": "booking_date",
+                  "value": "2024-01-20"
+                },
+                {
+                  "key": "booking_time",
+                  "value": "19:00"
+                },
+                {
+                  "key": "party_size",
+                  "value": "4"
+                },
+                {
+                  "key": "preferred_zone",
+                  "value": "VIP Section"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Alternative Time Slots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_alternative_time_slots?booking_date=2024-01-20&party_size=6",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_alternative_time_slots"],
+              "query": [
+                {
+                  "key": "booking_date",
+                  "value": "2024-01-20"
+                },
+                {
+                  "key": "party_size",
+                  "value": "6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_table_bookings"]
+            }
+          }
+        },
+        {
+          "name": "Get Bookings by Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings?date=2024-01-20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_table_bookings"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Bookings by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings?status=Confirmed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_table_bookings"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Confirmed"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status - Seat Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"RES-20240120-ABC1\",\n  \"new_status\": \"Seated\",\n  \"notes\": \"Customer arrived 5 minutes early\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_booking_status"]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status - Complete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"RES-20240120-ABC1\",\n  \"new_status\": \"Completed\",\n  \"notes\": \"Great dining experience\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_booking_status"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"RES-20240120-ABC1\",\n  \"new_status\": \"Cancelled\",\n  \"notes\": \"Customer called to cancel - family emergency\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_booking_status"]
+            }
+          }
+        },
+        {
+          "name": "Add to Waitlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Sarah Johnson\",\n  \"customer_phone\": \"+1234567891\",\n  \"customer_email\": \"sarah.johnson@email.com\",\n  \"requested_date\": \"2024-01-20\",\n  \"requested_time\": \"19:00\",\n  \"party_size\": 2,\n  \"preferred_zone\": \"Terrace\",\n  \"special_requests\": \"Anniversary dinner\",\n  \"willing_to_wait\": true,\n  \"alternative_dates\": [\"2024-01-21\", \"2024-01-22\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_to_waitlist",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.add_to_waitlist"]
+            }
+          }
+        },
+        {
+          "name": "Get Customer Booking History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_booking_history?customer_phone=+1234567890",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_customer_booking_history"],
+              "query": [
+                {
+                  "key": "customer_phone",
+                  "value": "+1234567890"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Restaurant Layout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_restaurant_layout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_restaurant_layout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Advance Payments & Tips Management",
+      "item": [
+        {
+          "name": "Request Advance Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"STAFF-2024-0001\",\n  \"amount_requested\": 500.00,\n  \"reason\": \"Medical emergency - need funds for hospital bills\",\n  \"deduction_installments\": 2,\n  \"expected_deduction_start\": \"2024-02-01\",\n  \"emergency_request\": true,\n  \"notes\": \"Need urgent approval for family medical emergency\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.request_advance_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.request_advance_payment"]
+            }
+          }
+        },
+        {
+          "name": "Approve Advance Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"advance_id\": \"ADV-20240120-ABC1\",\n  \"approval_data\": {\n    \"status\": \"Approved\",\n    \"amount_approved\": 450.00,\n    \"approved_by\": \"MANAGER-001\",\n    \"approval_notes\": \"Approved with reduced amount\",\n    \"deduction_installments\": 3,\n    \"deduction_start_date\": \"2024-02-01\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.approve_advance_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.approve_advance_payment"]
+            }
+          }
+        },
+        {
+          "name": "Reject Advance Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"advance_id\": \"ADV-20240120-ABC1\",\n  \"approval_data\": {\n    \"status\": \"Rejected\",\n    \"approved_by\": \"MANAGER-001\",\n    \"approval_notes\": \"Insufficient employment duration - please reapply after 30 days\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.approve_advance_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.approve_advance_payment"]
+            }
+          }
+        },
+        {
+          "name": "Record Individual Tip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"STAFF-2024-0001\",\n  \"amount\": 25.00,\n  \"tip_date\": \"2024-01-20\",\n  \"tip_time\": \"19:30\",\n  \"tip_type\": \"Individual\",\n  \"source\": \"Cash\",\n  \"order_id\": \"ORD-2024-0001\",\n  \"table_number\": 5,\n  \"customer_name\": \"John Smith\",\n  \"notes\": \"Excellent service\",\n  \"recorded_by\": \"MANAGER-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_tips",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.record_tips"]
+            }
+          }
+        },
+        {
+          "name": "Record Batch Tips",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tips\": [\n    {\n      \"staff_id\": \"STAFF-2024-0001\",\n      \"amount\": 15.00,\n      \"tip_type\": \"Individual\",\n      \"source\": \"Cash\",\n      \"table_number\": 3\n    },\n    {\n      \"staff_id\": \"STAFF-2024-0002\",\n      \"amount\": 20.00,\n      \"tip_type\": \"Individual\",\n      \"source\": \"Credit Card\",\n      \"table_number\": 7\n    },\n    {\n      \"staff_id\": \"STAFF-2024-0003\",\n      \"amount\": 18.50,\n      \"tip_type\": \"Individual\",\n      \"source\": \"Cash\",\n      \"table_number\": 12\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_tips",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.record_tips"]
+            }
+          }
+        },
+        {
+          "name": "Distribute Pooled Tips - Equal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"total_amount\": 120.00,\n  \"distribution_date\": \"2024-01-20\",\n  \"method\": \"equal\",\n  \"distributed_by\": \"MANAGER-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.distribute_pooled_tips",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.distribute_pooled_tips"]
+            }
+          }
+        },
+        {
+          "name": "Distribute Pooled Tips - By Hours",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"total_amount\": 200.00,\n  \"distribution_date\": \"2024-01-20\",\n  \"method\": \"hours_worked\",\n  \"distributed_by\": \"MANAGER-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.distribute_pooled_tips",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.distribute_pooled_tips"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Advances",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_advances"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Advances by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances?status=Pending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_advances"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Individual Staff Advances",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances?staff_id=STAFF-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_advances"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Tips",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_tips?staff_id=STAFF-2024-0001&date_from=2024-01-01&date_to=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_tips"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Calculate Staff Payroll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.calculate_staff_payroll?staff_id=STAFF-2024-0001&period_start=2024-01-01&period_end=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.calculate_staff_payroll"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                },
+                {
+                  "key": "period_start",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "period_end",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Customer Add Tip - Specific Waiter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"tip_data\": {\n    \"tip_amount\": 20.00,\n    \"tip_choice\": \"waiter\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.customer_add_tip"]
+            }
+          }
+        },
+        {
+          "name": "Customer Add Tip - Specific Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"tip_data\": {\n    \"tip_amount\": 25.00,\n    \"tip_choice\": \"specific_staff\",\n    \"selected_staff_id\": \"STAFF-2024-0002\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.customer_add_tip"]
+            }
+          }
+        },
+        {
+          "name": "Customer Add Tip - All Staff Pool",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"tip_data\": {\n    \"tip_amount\": 15.00,\n    \"tip_choice\": \"all_staff\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.customer_add_tip"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff for Tip Selection",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_for_tip_selection",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_for_tip_selection"]
+            }
+          }
+        },
+        {
+          "name": "Auto Distribute Daily Tips",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_distribute_daily_pooled_tips?date=2024-01-20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.auto_distribute_daily_pooled_tips"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Process Payment with Auto Tip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"payment_data\": {\n    \"payment_method\": \"Credit Card\",\n    \"amount_paid\": 75.50,\n    \"payment_reference\": \"TXN-123456\",\n    \"tip_amount\": 12.00,\n    \"tip_specific_staff\": true,\n    \"specific_staff_id\": \"STAFF-2024-0001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.process_payment"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Complimentary System & VIP Treatment",
+      "item": [
+        {
+          "name": "Auto Trigger Complimentary Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_trigger_complimentary?customer_id=CUST-2024-0001&order_id=ORD-2024-0001&trigger_type=birthday",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.auto_trigger_complimentary"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                },
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                },
+                {
+                  "key": "trigger_type",
+                  "value": "birthday"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Manual Add Complimentary Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"complimentary_data\": {\n    \"customer_id\": \"CUST-2024-0001\",\n    \"order_id\": \"ORD-2024-0001\",\n    \"item_name\": \"Apology Dessert\",\n    \"item_type\": \"Dessert\",\n    \"quantity\": 1,\n    \"reason\": \"Apologize for delayed service\",\n    \"approved_by\": \"MANAGER-001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.manual_add_complimentary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.manual_add_complimentary"]
+            }
+          }
+        },
+        {
+          "name": "Get Complimentary Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_suggestions?customer_id=CUST-2024-0001&order_total=250.00",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_complimentary_suggestions"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                },
+                {
+                  "key": "order_total",
+                  "value": "250.00"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Complimentary History - All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_history?date_from=2024-01-01&date_to=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_complimentary_history"],
+              "query": [
+                {
+                  "key": "date_from",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Complimentary History - Customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_history?customer_id=CUST-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_complimentary_history"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loyalty Program System",
+      "item": [
+        {
+          "name": "Add Loyalty Points",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_loyalty_points?customer_id=CUST-2024-0001&order_total=85.50&bonus_reason=birthday",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.add_loyalty_points"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                },
+                {
+                  "key": "order_total",
+                  "value": "85.50"
+                },
+                {
+                  "key": "bonus_reason",
+                  "value": "birthday"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Redeem Loyalty Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": \"CUST-2024-0001\",\n  \"redemption_data\": {\n    \"redemption_type\": \"free_appetizer\",\n    \"points\": 500,\n    \"item_requested\": \"Buffalo Wings\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.redeem_loyalty_points",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.redeem_loyalty_points"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Event Management System",
+      "item": [
+        {
+          "name": "Create Event Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_data\": {\n    \"event_type\": \"Birthday Party\",\n    \"event_name\": \"Sarah's 30th Birthday\",\n    \"host_name\": \"John Smith\",\n    \"host_contact\": \"+1-555-1234\",\n    \"host_email\": \"john@example.com\",\n    \"event_date\": \"2024-02-15\",\n    \"event_time\": \"19:00\",\n    \"duration_hours\": 4.0,\n    \"expected_guests\": 25,\n    \"private_dining_room\": \"VIP Suite\",\n    \"special_requirements\": \"Birthday cake and decorations\",\n    \"dietary_restrictions\": \"2 vegetarian guests\",\n    \"budget_range\": \"$2500-$5000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_event_booking",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_event_booking"]
+            }
+          }
+        },
+        {
+          "name": "Check Event Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.check_event_availability?event_date=2024-02-15&event_time=19:00&duration_hours=4&room_preference=VIP Suite",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.check_event_availability"],
+              "query": [
+                {
+                  "key": "event_date",
+                  "value": "2024-02-15"
+                },
+                {
+                  "key": "event_time",
+                  "value": "19:00"
+                },
+                {
+                  "key": "duration_hours",
+                  "value": "4"
+                },
+                {
+                  "key": "room_preference",
+                  "value": "VIP Suite"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer Feedback System",
+      "item": [
+        {
+          "name": "Submit Customer Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feedback_data\": {\n    \"customer_id\": \"CUST-2024-0001\",\n    \"order_id\": \"ORD-2024-0001\",\n    \"table_number\": \"Table 5\",\n    \"visit_date\": \"2024-01-20\",\n    \"feedback_type\": \"General Review\",\n    \"overall_rating\": \"5 - Excellent\",\n    \"food_quality_rating\": \"5 - Excellent\",\n    \"service_rating\": \"4 - Very Good\",\n    \"ambiance_rating\": \"5 - Excellent\",\n    \"value_rating\": \"4 - Very Good\",\n    \"speed_rating\": \"4 - Very Good\",\n    \"staff_member_mentioned\": \"Sarah\",\n    \"positive_comments\": \"Amazing food and great service from Sarah!\",\n    \"would_recommend\": \"Yes\",\n    \"likelihood_to_return\": \"Very Likely\",\n    \"feedback_source\": \"Tablet Survey\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.submit_customer_feedback",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.submit_customer_feedback"]
+            }
+          }
+        },
+        {
+          "name": "Get Feedback Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_feedback_analytics?date_from=2024-01-01&date_to=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_feedback_analytics"],
+              "query": [
+                {
+                  "key": "date_from",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integration & Analytics",
+      "item": [
+        {
+          "name": "Process Order Completion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_order_completion?order_id=ORD-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.process_order_completion"],
+              "query": [
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Customer 360 View",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_360_view?customer_id=CUST-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_customer_360_view"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                }
+              ]
             }
           }
         }

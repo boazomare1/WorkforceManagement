@@ -1,0 +1,158 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 10:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "complimentary_id",
+    "trigger_type",
+    "trigger_condition",
+    "customer_id",
+    "order_id",
+    "item_name",
+    "item_type",
+    "quantity",
+    "original_price",
+    "complimentary_reason",
+    "approved_by",
+    "date_given",
+    "time_given",
+    "status",
+    "cost_center",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "complimentary_id",
+      "fieldtype": "Data",
+      "label": "Complimentary ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "trigger_type",
+      "fieldtype": "Select",
+      "label": "Trigger Type",
+      "options": "Birthday\nAnniversary\nFirst Visit\nVIP Member\nComplaint Resolution\nSpecial Occasion\nManual Override\nLoyalty Reward\nPromotion\nApology Gesture",
+      "reqd": 1
+    },
+    {
+      "fieldname": "trigger_condition",
+      "fieldtype": "Text",
+      "label": "Trigger Condition Details"
+    },
+    {
+      "fieldname": "customer_id",
+      "fieldtype": "Data",
+      "label": "Customer ID"
+    },
+    {
+      "fieldname": "order_id",
+      "fieldtype": "Data",
+      "label": "Order ID"
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "label": "Complimentary Item",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item_type",
+      "fieldtype": "Select",
+      "label": "Item Type",
+      "options": "Appetizer\nMain Course\nDessert\nDrink\nAlcoholic Beverage\nWine\nChampagne\nAmuse-bouche\nBread & Butter\nService Upgrade",
+      "reqd": 1
+    },
+    {
+      "fieldname": "quantity",
+      "fieldtype": "Int",
+      "label": "Quantity",
+      "default": 1
+    },
+    {
+      "fieldname": "original_price",
+      "fieldtype": "Currency",
+      "label": "Original Price"
+    },
+    {
+      "fieldname": "complimentary_reason",
+      "fieldtype": "Text",
+      "label": "Reason for Complimentary"
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Data",
+      "label": "Approved By (Staff ID)"
+    },
+    {
+      "fieldname": "date_given",
+      "fieldtype": "Date",
+      "label": "Date Given",
+      "reqd": 1
+    },
+    {
+      "fieldname": "time_given",
+      "fieldtype": "Time",
+      "label": "Time Given",
+      "reqd": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Pending\nDelivered\nDeclined\nCancelled",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "cost_center",
+      "fieldtype": "Select",
+      "label": "Cost Center",
+      "options": "Marketing\nCustomer Service\nVIP Program\nLoyalty Program\nManager Discretion",
+      "default": "Marketing"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Additional Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 10:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Complimentary Item",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "complimentary_id"
+}

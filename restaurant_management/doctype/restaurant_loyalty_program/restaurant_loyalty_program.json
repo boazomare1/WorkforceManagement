@@ -1,0 +1,162 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 12:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "customer_id",
+    "current_points",
+    "lifetime_points",
+    "points_redeemed",
+    "current_tier",
+    "tier_progress",
+    "next_tier",
+    "points_to_next_tier",
+    "tier_benefits",
+    "member_since",
+    "last_activity",
+    "points_expiry_date",
+    "special_status",
+    "referral_code",
+    "referred_customers",
+    "bonus_multiplier",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "customer_id",
+      "fieldtype": "Data",
+      "label": "Customer ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "current_points",
+      "fieldtype": "Int",
+      "label": "Current Points",
+      "default": 0
+    },
+    {
+      "fieldname": "lifetime_points",
+      "fieldtype": "Int",
+      "label": "Lifetime Points Earned",
+      "default": 0
+    },
+    {
+      "fieldname": "points_redeemed",
+      "fieldtype": "Int",
+      "label": "Points Redeemed",
+      "default": 0
+    },
+    {
+      "fieldname": "current_tier",
+      "fieldtype": "Select",
+      "label": "Current Tier",
+      "options": "Bronze\nSilver\nGold\nPlatinum\nVIP\nFounder",
+      "default": "Bronze"
+    },
+    {
+      "fieldname": "tier_progress",
+      "fieldtype": "Percent",
+      "label": "Tier Progress %",
+      "default": 0
+    },
+    {
+      "fieldname": "next_tier",
+      "fieldtype": "Data",
+      "label": "Next Tier"
+    },
+    {
+      "fieldname": "points_to_next_tier",
+      "fieldtype": "Int",
+      "label": "Points to Next Tier",
+      "default": 0
+    },
+    {
+      "fieldname": "tier_benefits",
+      "fieldtype": "Text",
+      "label": "Current Tier Benefits (JSON)"
+    },
+    {
+      "fieldname": "member_since",
+      "fieldtype": "Date",
+      "label": "Member Since",
+      "reqd": 1
+    },
+    {
+      "fieldname": "last_activity",
+      "fieldtype": "Datetime",
+      "label": "Last Activity"
+    },
+    {
+      "fieldname": "points_expiry_date",
+      "fieldtype": "Date",
+      "label": "Points Expiry Date"
+    },
+    {
+      "fieldname": "special_status",
+      "fieldtype": "Text",
+      "label": "Special Status/Notes"
+    },
+    {
+      "fieldname": "referral_code",
+      "fieldtype": "Data",
+      "label": "Personal Referral Code"
+    },
+    {
+      "fieldname": "referred_customers",
+      "fieldtype": "Int",
+      "label": "Customers Referred",
+      "default": 0
+    },
+    {
+      "fieldname": "bonus_multiplier",
+      "fieldtype": "Float",
+      "label": "Bonus Point Multiplier",
+      "default": 1.0
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Admin Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 12:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Loyalty Program",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "customer_id"
+}

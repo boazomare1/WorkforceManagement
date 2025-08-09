@@ -1,0 +1,180 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 10:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "customer_id",
+    "full_name",
+    "email",
+    "phone",
+    "date_of_birth",
+    "anniversary_date",
+    "membership_tier",
+    "loyalty_points",
+    "total_visits",
+    "total_spent",
+    "average_spend_per_visit",
+    "favorite_items",
+    "dietary_restrictions",
+    "preferred_seating",
+    "special_occasions",
+    "last_visit_date",
+    "customer_since",
+    "vip_status",
+    "communication_preferences",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "customer_id",
+      "fieldtype": "Data",
+      "label": "Customer ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "full_name",
+      "fieldtype": "Data",
+      "label": "Full Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "email",
+      "fieldtype": "Data",
+      "label": "Email"
+    },
+    {
+      "fieldname": "phone",
+      "fieldtype": "Data",
+      "label": "Phone Number"
+    },
+    {
+      "fieldname": "date_of_birth",
+      "fieldtype": "Date",
+      "label": "Date of Birth"
+    },
+    {
+      "fieldname": "anniversary_date",
+      "fieldtype": "Date",
+      "label": "Anniversary Date"
+    },
+    {
+      "fieldname": "membership_tier",
+      "fieldtype": "Select",
+      "label": "Membership Tier",
+      "options": "Regular\nBronze\nSilver\nGold\nPlatinum\nVIP\nFounder",
+      "default": "Regular"
+    },
+    {
+      "fieldname": "loyalty_points",
+      "fieldtype": "Int",
+      "label": "Loyalty Points",
+      "default": 0
+    },
+    {
+      "fieldname": "total_visits",
+      "fieldtype": "Int",
+      "label": "Total Visits",
+      "default": 0
+    },
+    {
+      "fieldname": "total_spent",
+      "fieldtype": "Currency",
+      "label": "Total Amount Spent",
+      "default": 0
+    },
+    {
+      "fieldname": "average_spend_per_visit",
+      "fieldtype": "Currency",
+      "label": "Average Spend Per Visit",
+      "default": 0
+    },
+    {
+      "fieldname": "favorite_items",
+      "fieldtype": "Text",
+      "label": "Favorite Items (JSON Array)"
+    },
+    {
+      "fieldname": "dietary_restrictions",
+      "fieldtype": "Text",
+      "label": "Dietary Restrictions"
+    },
+    {
+      "fieldname": "preferred_seating",
+      "fieldtype": "Select",
+      "label": "Preferred Seating",
+      "options": "Window\nCorner\nBar\nPrivate Room\nOutdoor\nQuiet Section\nNo Preference"
+    },
+    {
+      "fieldname": "special_occasions",
+      "fieldtype": "Text",
+      "label": "Special Occasions (JSON)"
+    },
+    {
+      "fieldname": "last_visit_date",
+      "fieldtype": "Date",
+      "label": "Last Visit Date"
+    },
+    {
+      "fieldname": "customer_since",
+      "fieldtype": "Date",
+      "label": "Customer Since",
+      "reqd": 1
+    },
+    {
+      "fieldname": "vip_status",
+      "fieldtype": "Check",
+      "label": "VIP Status",
+      "default": 0
+    },
+    {
+      "fieldname": "communication_preferences",
+      "fieldtype": "Text",
+      "label": "Communication Preferences (JSON)"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Customer Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 10:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Customer Profile",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "full_name"
+}

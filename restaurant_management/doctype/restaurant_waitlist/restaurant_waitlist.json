@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "waitlist_id",
+  "customer_name",
+  "customer_phone",
+  "customer_email",
+  "requested_date",
+  "requested_time",
+  "party_size",
+  "preferred_zone",
+  "special_requests",
+  "waitlist_status",
+  "added_time",
+  "willing_to_wait",
+  "alternative_dates",
+  "contacted_time",
+  "response_deadline",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "waitlist_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Waitlist ID",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Customer Email"
+  },
+  {
+   "fieldname": "requested_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Requested Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "requested_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Requested Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_size",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Party Size",
+   "reqd": 1
+  },
+  {
+   "fieldname": "preferred_zone",
+   "fieldtype": "Select",
+   "label": "Preferred Zone",
+   "options": "\nMain Dining\nVIP Section\nTerrace\nBar Area\nPrivate Dining"
+  },
+  {
+   "fieldname": "special_requests",
+   "fieldtype": "Small Text",
+   "label": "Special Requests"
+  },
+  {
+   "fieldname": "waitlist_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Waitlist Status",
+   "options": "Active\nContacted\nConfirmed\nExpired\nCancelled",
+   "default": "Active"
+  },
+  {
+   "fieldname": "added_time",
+   "fieldtype": "Datetime",
+   "label": "Added Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "willing_to_wait",
+   "fieldtype": "Check",
+   "label": "Willing to Wait",
+   "default": "1"
+  },
+  {
+   "fieldname": "alternative_dates",
+   "fieldtype": "Small Text",
+   "label": "Alternative Dates"
+  },
+  {
+   "fieldname": "contacted_time",
+   "fieldtype": "Datetime",
+   "label": "Contacted Time"
+  },
+  {
+   "fieldname": "response_deadline",
+   "fieldtype": "Datetime",
+   "label": "Response Deadline"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Long Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Waitlist",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

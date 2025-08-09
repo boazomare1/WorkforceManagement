@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-15 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tip_id",
+  "staff_id",
+  "amount",
+  "tip_date",
+  "tip_time",
+  "tip_type",
+  "source",
+  "order_id",
+  "table_number",
+  "customer_name",
+  "notes",
+  "recorded_by",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "tip_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tip ID",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "staff_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Staff ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Tip Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tip_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Tip Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tip_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Tip Time"
+  },
+  {
+   "fieldname": "tip_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tip Type",
+   "options": "Individual\nPooled\nCredit Card\nDigital",
+   "default": "Individual"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Tip Source",
+   "options": "Cash\nCredit Card\nDigital\nPool Distribution",
+   "default": "Cash"
+  },
+  {
+   "fieldname": "order_id",
+   "fieldtype": "Data",
+   "label": "Order ID"
+  },
+  {
+   "fieldname": "table_number",
+   "fieldtype": "Int",
+   "label": "Table Number"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "recorded_by",
+   "fieldtype": "Data",
+   "label": "Recorded By"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Confirmed\nPending\nDisputed",
+   "default": "Confirmed"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-15 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Staff Tips",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
