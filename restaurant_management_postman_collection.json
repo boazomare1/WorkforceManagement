@@ -1,0 +1,350 @@
+{
+  "info": {
+    "name": "Restaurant Management API",
+    "description": "Complete API collection for Restaurant Management System built on Frappe/ERPNext",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://site1.local:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "your_api_key_here",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "Authorization",
+        "value": "token {{api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Staff Management",
+      "item": [
+        {
+          "name": "Create Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"John Doe\",\n  \"email\": \"john.doe@restaurant.com\",\n  \"phone\": \"+1234567890\",\n  \"date_of_birth\": \"1990-01-01\",\n  \"gender\": \"Male\",\n  \"address\": \"123 Main St\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postal_code\": \"10001\",\n  \"emergency_contact_name\": \"Jane Doe\",\n  \"emergency_contact_phone\": \"+1234567891\",\n  \"position\": \"Waiter\",\n  \"department\": \"Service\",\n  \"hire_date\": \"2024-01-01\",\n  \"base_hourly_rate\": 15.50,\n  \"weekend_rate\": 18.00,\n  \"holiday_rate\": 20.00,\n  \"tax_id\": \"123-45-6789\",\n  \"bank_account\": \"1234567890\",\n  \"notes\": \"Excellent customer service skills\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_staff"]
+            }
+          }
+        },
+        {
+          "name": "Get All Staff",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff?staff_id=STAFF-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"base_hourly_rate\": 16.50,\n  \"notes\": \"Updated notes - promoted to senior waiter\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_staff?staff_id=STAFF-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_staff"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Staff",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.delete_staff?staff_id=STAFF-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.delete_staff"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payroll Management",
+      "item": [
+        {
+          "name": "Calculate Payroll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.calculate_payroll?staff_id=STAFF-2024-0001&start_date=2024-01-01&end_date=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.calculate_payroll"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payroll Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_payroll_report?start_date=2024-01-01&end_date=2024-01-31&department=Service",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_payroll_report"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2024-01-31"
+                },
+                {
+                  "key": "department",
+                  "value": "Service"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Face Recognition",
+      "item": [
+        {
+          "name": "Register Face",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"STAFF-2024-0001\",\n  \"face_encoding\": \"[0.123, 0.456, 0.789, ...]\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.register_face",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.register_face"]
+            }
+          }
+        },
+        {
+          "name": "Identify Staff by Face",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"face_encoding\": \"[0.123, 0.456, 0.789, ...]\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.identify_staff_by_face",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.identify_staff_by_face"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance Management",
+      "item": [
+        {
+          "name": "Mark Check In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"STAFF-2024-0001\",\n  \"action\": \"check_in\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.mark_attendance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.mark_attendance"]
+            }
+          }
+        },
+        {
+          "name": "Mark Check Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"STAFF-2024-0001\",\n  \"action\": \"check_out\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.mark_attendance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.mark_attendance"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_attendance_report?staff_id=STAFF-2024-0001&start_date=2024-01-01&end_date=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_attendance_report"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utility APIs",
+      "item": [
+        {
+          "name": "Get Positions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_positions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_positions"]
+            }
+          }
+        },
+        {
+          "name": "Get Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_departments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_departments"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_stats"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

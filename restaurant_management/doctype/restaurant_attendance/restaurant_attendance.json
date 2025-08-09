@@ -1,0 +1,141 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-08 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "staff_info",
+  "attendance_info"
+ ],
+ "fields": [
+  {
+   "fieldname": "staff_info",
+   "fieldtype": "Section Break",
+   "label": "Staff Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "staff_id",
+   "fieldtype": "Link",
+   "label": "Staff",
+   "options": "Restaurant Staff",
+   "reqd": 1
+  },
+  {
+   "fieldname": "staff_name",
+   "fieldtype": "Data",
+   "label": "Staff Name",
+   "read_only": 1,
+   "fetch_from": "staff_id.full_name"
+  },
+  {
+   "fieldname": "position",
+   "fieldtype": "Data",
+   "label": "Position",
+   "read_only": 1,
+   "fetch_from": "staff_id.position"
+  },
+  {
+   "fieldname": "attendance_info",
+   "fieldtype": "Section Break",
+   "label": "Attendance Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "check_in_time",
+   "fieldtype": "Datetime",
+   "label": "Check In Time"
+  },
+  {
+   "fieldname": "check_out_time",
+   "fieldtype": "Datetime",
+   "label": "Check Out Time"
+  },
+  {
+   "fieldname": "hours_worked",
+   "fieldtype": "Float",
+   "label": "Hours Worked",
+   "read_only": 1,
+   "precision": 2
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Present\nAbsent\nHalf Day\nOn Leave",
+   "default": "Present",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attendance_method",
+   "fieldtype": "Select",
+   "label": "Attendance Method",
+   "options": "Face Recognition\nManual\nMobile App",
+   "default": "Face Recognition"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes",
+   "description": "Additional notes about attendance"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Attendance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Restaurant Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Restaurant Staff",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+} 

@@ -1,0 +1,478 @@
+{
+  "info": {
+    "name": "WorkForce Management SaaS - Complete API Collection",
+    "description": "Comprehensive API collection for multi-industry workforce management system including restaurant management, construction, cleaning services, security, and more.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "workforce-management-complete-collection",
+    "version": {
+      "major": 2,
+      "minor": 0,
+      "patch": 0
+    }
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://site1.local:8000",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "noauth"
+  },
+  "item": [
+    {
+      "name": "🏢 Company Management (SaaS Multi-tenancy)",
+      "item": [
+        {
+          "name": "Create Company",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_data\": {\n    \"company_name\": \"ABC Construction Co.\",\n    \"industry_type\": \"Construction\",\n    \"primary_contact\": \"John Doe\",\n    \"email\": \"john@abcconstruction.com\",\n    \"phone\": \"+1-555-0123\",\n    \"address_line_1\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"postal_code\": \"10001\",\n    \"country\": \"USA\",\n    \"subscription_plan\": \"Professional\",\n    \"max_workers\": 100,\n    \"max_sites\": 15\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.create_company",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.create_company"]
+            }
+          }
+        },
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_companies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_companies"]
+            }
+          }
+        },
+        {
+          "name": "Get Company Dashboard",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_company_dashboard?company={{company_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_company_dashboard"],
+              "query": [
+                {
+                  "key": "company",
+                  "value": "{{company_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏗️ Work Site Management",
+      "item": [
+        {
+          "name": "Create Work Site",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"site_data\": {\n    \"site_name\": \"Downtown Office Building\",\n    \"company\": \"{{company_id}}\",\n    \"site_type\": \"Office Building\",\n    \"address\": \"456 Business Ave, Suite 100\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"postal_code\": \"10002\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060,\n    \"geofence_radius\": 150,\n    \"client_name\": \"Metro Cleaning Corp\",\n    \"client_contact_person\": \"Sarah Johnson\",\n    \"client_phone\": \"+1-555-0456\",\n    \"client_email\": \"sarah@metrocleaning.com\",\n    \"contract_start_date\": \"2025-08-01\",\n    \"contract_end_date\": \"2026-07-31\",\n    \"standard_work_hours\": 8.0\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.create_work_site",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.create_work_site"]
+            }
+          }
+        },
+        {
+          "name": "Get Work Sites",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_work_sites?company={{company_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_work_sites"],
+              "query": [
+                {
+                  "key": "company",
+                  "value": "{{company_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👷 Worker Management",
+      "item": [
+        {
+          "name": "Create Worker",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_data\": {\n    \"full_name\": \"Mike Rodriguez\",\n    \"company\": \"{{company_id}}\",\n    \"email\": \"mike.rodriguez@email.com\",\n    \"phone\": \"+1-555-0789\",\n    \"national_id\": \"123-45-6789\",\n    \"date_of_birth\": \"1990-05-15\",\n    \"gender\": \"Male\",\n    \"address\": \"789 Worker St\",\n    \"city\": \"Brooklyn\",\n    \"state\": \"NY\",\n    \"postal_code\": \"11201\",\n    \"worker_type\": \"Full-time\",\n    \"job_title\": \"Construction Worker\",\n    \"department\": \"Field Operations\",\n    \"skill_level\": \"Intermediate\",\n    \"hire_date\": \"2025-08-01\",\n    \"pay_structure\": \"Hourly\",\n    \"base_rate\": 25.50\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.create_worker",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.create_worker"]
+            }
+          }
+        },
+        {
+          "name": "Get Workers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_workers?company={{company_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_workers"],
+              "query": [
+                {
+                  "key": "company",
+                  "value": "{{company_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📍 Site Assignments",
+      "item": [
+        {
+          "name": "Assign Worker to Site",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignment_data\": {\n    \"worker\": \"{{worker_id}}\",\n    \"work_site\": \"{{site_id}}\",\n    \"company\": \"{{company_id}}\",\n    \"start_date\": \"2025-08-09\",\n    \"end_date\": \"2025-12-31\",\n    \"site_role\": \"Lead Cleaner\",\n    \"responsibilities\": \"Office cleaning, restroom maintenance, trash removal\",\n    \"scheduled_hours_per_day\": 8.0,\n    \"work_days\": \"Monday-Friday\",\n    \"shift_start_time\": \"08:00:00\",\n    \"shift_end_time\": \"16:00:00\",\n    \"site_specific_rate\": 26.00\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.assign_worker_to_site",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.assign_worker_to_site"]
+            }
+          }
+        },
+        {
+          "name": "Get Site Assignments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_site_assignments?company={{company_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_site_assignments"],
+              "query": [
+                {
+                  "key": "company",
+                  "value": "{{company_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📱 Mobile Check-in/Check-out",
+      "item": [
+        {
+          "name": "Mobile Check-in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"checkin_data\": {\n    \"worker\": \"{{worker_id}}\",\n    \"work_site\": \"{{site_id}}\",\n    \"company\": \"{{company_id}}\",\n    \"check_in_method\": \"Mobile App\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060,\n    \"device_id\": \"mobile_device_123\",\n    \"gps_required\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.mobile_checkin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.mobile_checkin"]
+            }
+          }
+        },
+        {
+          "name": "Mobile Check-out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"checkout_data\": {\n    \"worker\": \"{{worker_id}}\",\n    \"check_out_method\": \"Mobile App\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060,\n    \"total_break_minutes\": 60,\n    \"task_description\": \"Completed office cleaning, restrooms, and common areas\",\n    \"work_completed\": 100,\n    \"is_holiday\": false,\n    \"is_night_shift\": false,\n    \"hazard_pay_applicable\": false\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.mobile_checkout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.mobile_checkout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Attendance & Reports",
+      "item": [
+        {
+          "name": "Get Attendance Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_attendance_report?company={{company_id}}&start_date=2025-08-01&end_date=2025-08-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_attendance_report"],
+              "query": [
+                {
+                  "key": "company",
+                  "value": "{{company_id}}"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2025-08-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2025-08-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Payroll & Wages",
+      "item": [
+        {
+          "name": "Calculate Worker Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker\": \"{{worker_id}}\",\n  \"start_date\": \"2025-08-01\",\n  \"end_date\": \"2025-08-07\",\n  \"company\": \"{{company_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.calculate_worker_payroll",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.calculate_worker_payroll"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏭 Industry Templates",
+      "item": [
+        {
+          "name": "Get Industry Templates",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_industry_templates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_industry_templates"]
+            }
+          }
+        },
+        {
+          "name": "Apply Industry Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": \"{{company_id}}\",\n  \"template_id\": \"{{template_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.apply_industry_template",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.apply_industry_template"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔧 Utility APIs",
+      "item": [
+        {
+          "name": "Get Industry Types",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_industry_types",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_industry_types"]
+            }
+          }
+        },
+        {
+          "name": "Get Worker Types",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_worker_types",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_worker_types"]
+            }
+          }
+        },
+        {
+          "name": "Get Site Types",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_site_types",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_site_types"]
+            }
+          }
+        },
+        {
+          "name": "Get Skill Levels",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_skill_levels",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_skill_levels"]
+            }
+          }
+        },
+        {
+          "name": "Get Pay Structures",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_pay_structures",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_pay_structures"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscription Plans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.workforce_api.get_subscription_plans",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.workforce_api.get_subscription_plans"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🍽️ Restaurant Management (Legacy)",
+      "item": [
+        {
+          "name": "Get Positions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_positions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_positions"]
+            }
+          }
+        },
+        {
+          "name": "Get Departments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_departments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_departments"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff"]
+            }
+          }
+        },
+        {
+          "name": "Mark Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staff_id\": \"{{staff_id}}\",\n  \"action\": \"check_in\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.mark_attendance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.mark_attendance"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

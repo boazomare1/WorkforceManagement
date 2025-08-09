@@ -1,0 +1,250 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-08 22:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item_info",
+  "pricing_info",
+  "category_info",
+  "availability_info",
+  "ingredients_info",
+  "description_info"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_info",
+   "fieldtype": "Section Break",
+   "label": "Item Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Data",
+   "label": "Item Code",
+   "unique": 1,
+   "reqd": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_description",
+   "fieldtype": "Text",
+   "label": "Description",
+   "description": "Brief description of the menu item"
+  },
+  {
+   "fieldname": "item_image",
+   "fieldtype": "Attach Image",
+   "label": "Item Image",
+   "description": "Image of the menu item"
+  },
+  {
+   "fieldname": "pricing_info",
+   "fieldtype": "Section Break",
+   "label": "Pricing Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cost_price",
+   "fieldtype": "Currency",
+   "label": "Cost Price",
+   "description": "Cost to prepare this item"
+  },
+  {
+   "fieldname": "profit_margin",
+   "fieldtype": "Percent",
+   "label": "Profit Margin",
+   "read_only": 1,
+   "description": "Calculated profit margin"
+  },
+  {
+   "fieldname": "tax_rate",
+   "fieldtype": "Percent",
+   "label": "Tax Rate",
+   "default": 0
+  },
+  {
+   "fieldname": "category_info",
+   "fieldtype": "Section Break",
+   "label": "Category Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "label": "Category",
+   "options": "Restaurant Menu Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "subcategory",
+   "fieldtype": "Link",
+   "label": "Subcategory",
+   "options": "Restaurant Menu Subcategory"
+  },
+  {
+   "fieldname": "is_vegetarian",
+   "fieldtype": "Check",
+   "label": "Vegetarian",
+   "description": "Check if this is a vegetarian item"
+  },
+  {
+   "fieldname": "is_vegan",
+   "fieldtype": "Check",
+   "label": "Vegan",
+   "description": "Check if this is a vegan item"
+  },
+  {
+   "fieldname": "spice_level",
+   "fieldtype": "Select",
+   "label": "Spice Level",
+   "options": "Mild\nMedium\nHot\nExtra Hot",
+   "default": "Mild"
+  },
+  {
+   "fieldname": "availability_info",
+   "fieldtype": "Section Break",
+   "label": "Availability Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "is_available",
+   "fieldtype": "Check",
+   "label": "Available",
+   "default": 1,
+   "description": "Check if this item is currently available"
+  },
+  {
+   "fieldname": "preparation_time",
+   "fieldtype": "Int",
+   "label": "Preparation Time (minutes)",
+   "default": 15,
+   "description": "Estimated time to prepare this item"
+  },
+  {
+   "fieldname": "is_popular",
+   "fieldtype": "Check",
+   "label": "Popular Item",
+   "description": "Mark as popular for special display"
+  },
+  {
+   "fieldname": "is_chef_special",
+   "fieldtype": "Check",
+   "label": "Chef Special",
+   "description": "Mark as chef's special recommendation"
+  },
+  {
+   "fieldname": "ingredients_info",
+   "fieldtype": "Section Break",
+   "label": "Ingredients Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "ingredients",
+   "fieldtype": "Table",
+   "label": "Ingredients",
+   "options": "Restaurant Menu Item Ingredient",
+   "description": "List of ingredients used in this item"
+  },
+  {
+   "fieldname": "allergens",
+   "fieldtype": "MultiSelect",
+   "label": "Allergens",
+   "options": "Gluten\nDairy\nNuts\nShellfish\nEggs\nSoy\nFish\nWheat",
+   "description": "Select allergens present in this item"
+  },
+  {
+   "fieldname": "nutritional_info",
+   "fieldtype": "Text",
+   "label": "Nutritional Information",
+   "description": "Calories, protein, carbs, etc."
+  },
+  {
+   "fieldname": "description_info",
+   "fieldtype": "Section Break",
+   "label": "Additional Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "cooking_instructions",
+   "fieldtype": "Text",
+   "label": "Cooking Instructions",
+   "description": "Special cooking instructions for kitchen staff"
+  },
+  {
+   "fieldname": "serving_suggestions",
+   "fieldtype": "Text",
+   "label": "Serving Suggestions",
+   "description": "How to serve this item"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes",
+   "description": "Additional notes about this menu item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 22:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Menu Item",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Restaurant Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Restaurant Staff",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+} 

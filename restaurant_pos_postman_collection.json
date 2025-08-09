@@ -1,0 +1,492 @@
+{
+  "info": {
+    "name": "Restaurant POS System API",
+    "description": "Complete API collection for Restaurant POS System with Menu Management, Order Processing, and Payment Handling",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://site1.local:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "your_api_key_here",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "Authorization",
+        "value": "token {{api_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Menu Management",
+      "item": [
+        {
+          "name": "Create Menu Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_name\": \"Main Course\",\n  \"description\": \"Delicious main course dishes\",\n  \"display_order\": 1,\n  \"color_code\": \"#FF6B6B\",\n  \"notes\": \"Popular main course category\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_menu_category",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_menu_category"]
+            }
+          }
+        },
+        {
+          "name": "Get Menu Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_menu_categories"]
+            }
+          }
+        },
+        {
+          "name": "Create Menu Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_name\": \"Grilled Chicken Breast\",\n  \"item_description\": \"Juicy grilled chicken breast with herbs and spices\",\n  \"price\": 18.99,\n  \"cost_price\": 8.50,\n  \"category\": \"Main Course\",\n  \"is_vegetarian\": 0,\n  \"is_vegan\": 0,\n  \"spice_level\": \"Mild\",\n  \"preparation_time\": 20,\n  \"is_popular\": 1,\n  \"tax_rate\": 8.5,\n  \"allergens\": [\"Dairy\"],\n  \"nutritional_info\": \"Calories: 350, Protein: 45g, Carbs: 5g\",\n  \"cooking_instructions\": \"Grill for 8-10 minutes each side\",\n  \"serving_suggestions\": \"Serve with steamed vegetables and rice\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_menu_item",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_menu_item"]
+            }
+          }
+        },
+        {
+          "name": "Get Menu Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_items",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_menu_items"]
+            }
+          }
+        },
+        {
+          "name": "Get Menu Items by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_items?category=Main Course",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_menu_items"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Main Course"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Popular Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_popular_items",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_popular_items"]
+            }
+          }
+        },
+        {
+          "name": "Get Chef Specials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_chef_specials",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_chef_specials"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Management",
+      "item": [
+        {
+          "name": "Create Dine-In Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_type\": \"Dine In\",\n  \"table_number\": 5,\n  \"waiter\": \"STAFF-2024-0001\",\n  \"customer_name\": \"John Smith\",\n  \"customer_phone\": \"+1234567890\",\n  \"special_instructions\": \"Extra crispy fries please\",\n  \"items\": [\n    {\n      \"menu_item\": \"ITEM-2024-0001\",\n      \"quantity\": 2,\n      \"special_instructions\": \"Medium rare\"\n    },\n    {\n      \"menu_item\": \"ITEM-2024-0002\",\n      \"quantity\": 1,\n      \"special_instructions\": \"No onions\"\n    }\n  ],\n  \"discount_type\": \"Fixed Amount\",\n  \"discount_amount\": 5.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_order"]
+            }
+          }
+        },
+        {
+          "name": "Create Takeaway Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_type\": \"Takeaway\",\n  \"customer_name\": \"Jane Doe\",\n  \"customer_phone\": \"+1234567891\",\n  \"customer_email\": \"jane.doe@email.com\",\n  \"special_instructions\": \"Pack separately\",\n  \"items\": [\n    {\n      \"menu_item\": \"ITEM-2024-0001\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_order"]
+            }
+          }
+        },
+        {
+          "name": "Create Delivery Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_type\": \"Delivery\",\n  \"customer_name\": \"Mike Johnson\",\n  \"customer_phone\": \"+1234567892\",\n  \"customer_email\": \"mike.johnson@email.com\",\n  \"delivery_address\": \"123 Main St, City, State 12345\",\n  \"special_instructions\": \"Ring doorbell twice\",\n  \"items\": [\n    {\n      \"menu_item\": \"ITEM-2024-0001\",\n      \"quantity\": 2\n    },\n    {\n      \"menu_item\": \"ITEM-2024-0003\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_order"]
+            }
+          }
+        },
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_orders"]
+            }
+          }
+        },
+        {
+          "name": "Get Orders by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_orders?filters={\"order_status\":\"Pending\"}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_orders"],
+              "query": [
+                {
+                  "key": "filters",
+                  "value": "{\"order_status\":\"Pending\"}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_details?order_id=ORD-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_order_details"],
+              "query": [
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"new_status\": \"Confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_order_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_order_status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Processing",
+      "item": [
+        {
+          "name": "Get Payment Methods",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_payment_methods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_payment_methods"]
+            }
+          }
+        },
+        {
+          "name": "Process Cash Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"payment_data\": {\n    \"payment_method\": \"Cash\",\n    \"amount_paid\": 50.00,\n    \"payment_reference\": \"CASH-001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.process_payment"]
+            }
+          }
+        },
+        {
+          "name": "Process Card Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"payment_data\": {\n    \"payment_method\": \"Credit Card\",\n    \"amount_paid\": 45.99,\n    \"payment_reference\": \"TXN-123456789\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.process_payment"]
+            }
+          }
+        },
+        {
+          "name": "Process Mobile Money Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"payment_data\": {\n    \"payment_method\": \"Mobile Money\",\n    \"amount_paid\": 45.99,\n    \"payment_reference\": \"MM-987654321\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.process_payment"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports & Analytics",
+      "item": [
+        {
+          "name": "Get Sales Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_sales_report?start_date=2024-01-01&end_date=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_sales_report"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2024-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Order Status Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_status_summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_order_status_summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "item": [
+        {
+          "name": "Create Staff Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Sarah Wilson\",\n  \"email\": \"sarah.wilson@restaurant.com\",\n  \"phone\": \"+1234567893\",\n  \"date_of_birth\": \"1992-05-15\",\n  \"gender\": \"Female\",\n  \"address\": \"456 Oak St\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"postal_code\": \"10002\",\n  \"emergency_contact_name\": \"Tom Wilson\",\n  \"emergency_contact_phone\": \"+1234567894\",\n  \"position\": \"Waiter\",\n  \"department\": \"Service\",\n  \"hire_date\": \"2024-01-15\",\n  \"base_hourly_rate\": 16.00,\n  \"weekend_rate\": 18.50,\n  \"holiday_rate\": 20.00,\n  \"tax_id\": \"987-65-4321\",\n  \"bank_account\": \"9876543210\",\n  \"notes\": \"Excellent customer service skills\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_staff"]
+            }
+          }
+        },
+        {
+          "name": "Get All Staff",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff?staff_id=STAFF-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff"],
+              "query": [
+                {
+                  "key": "staff_id",
+                  "value": "STAFF-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Positions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_positions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_positions"]
+            }
+          }
+        },
+        {
+          "name": "Get Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_departments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_departments"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

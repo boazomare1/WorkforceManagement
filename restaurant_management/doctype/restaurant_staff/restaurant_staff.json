@@ -1,0 +1,254 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-08 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "staff_info",
+  "personal_info",
+  "employment_info",
+  "payroll_info",
+  "face_recognition",
+  "contact_info"
+ ],
+ "fields": [
+  {
+   "fieldname": "staff_info",
+   "fieldtype": "Section Break",
+   "label": "Staff Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "staff_id",
+   "fieldtype": "Data",
+   "label": "Staff ID",
+   "unique": 1,
+   "reqd": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Email",
+   "label": "Email",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale\nOther"
+  },
+  {
+   "fieldname": "personal_info",
+   "fieldtype": "Section Break",
+   "label": "Personal Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "postal_code",
+   "fieldtype": "Data",
+   "label": "Postal Code"
+  },
+  {
+   "fieldname": "emergency_contact_name",
+   "fieldtype": "Data",
+   "label": "Emergency Contact Name"
+  },
+  {
+   "fieldname": "emergency_contact_phone",
+   "fieldtype": "Phone",
+   "label": "Emergency Contact Phone"
+  },
+  {
+   "fieldname": "employment_info",
+   "fieldtype": "Section Break",
+   "label": "Employment Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "position",
+   "fieldtype": "Select",
+   "label": "Position",
+   "options": "Manager\nWaiter\nChef\nKitchen Staff\nCashier\nHost/Hostess\nBartender\nDishwasher",
+   "reqd": 1
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Select",
+   "label": "Department",
+   "options": "Management\nService\nKitchen\nBar\nSupport"
+  },
+  {
+   "fieldname": "hire_date",
+   "fieldtype": "Date",
+   "label": "Hire Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employment_status",
+   "fieldtype": "Select",
+   "label": "Employment Status",
+   "options": "Active\nInactive\nTerminated\nOn Leave",
+   "default": "Active"
+  },
+  {
+   "fieldname": "payroll_info",
+   "fieldtype": "Section Break",
+   "label": "Payroll Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "base_hourly_rate",
+   "fieldtype": "Currency",
+   "label": "Base Hourly Rate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "overtime_rate",
+   "fieldtype": "Currency",
+   "label": "Overtime Rate (1.5x)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "weekend_rate",
+   "fieldtype": "Currency",
+   "label": "Weekend Rate",
+   "description": "Rate for weekend shifts"
+  },
+  {
+   "fieldname": "holiday_rate",
+   "fieldtype": "Currency",
+   "label": "Holiday Rate",
+   "description": "Rate for holiday shifts"
+  },
+  {
+   "fieldname": "tax_id",
+   "fieldtype": "Data",
+   "label": "Tax ID/SSN"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Bank Account Number"
+  },
+  {
+   "fieldname": "face_recognition",
+   "fieldtype": "Section Break",
+   "label": "Face Recognition",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "face_encoding",
+   "fieldtype": "Text",
+   "label": "Face Encoding",
+   "description": "Stored face encoding for attendance system"
+  },
+  {
+   "fieldname": "face_registered",
+   "fieldtype": "Check",
+   "label": "Face Registered",
+   "description": "Whether face has been registered for attendance"
+  },
+  {
+   "fieldname": "contact_info",
+   "fieldtype": "Section Break",
+   "label": "Additional Contact Information",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "emergency_contact_relationship",
+   "fieldtype": "Data",
+   "label": "Relationship to Emergency Contact"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes",
+   "description": "Additional notes about the staff member"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Staff",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Restaurant Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Restaurant Staff",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+} 
