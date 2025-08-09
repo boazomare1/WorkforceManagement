@@ -1,0 +1,253 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 16:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "campaign_id",
+    "campaign_name",
+    "campaign_type",
+    "campaign_status",
+    "target_audience",
+    "customer_segment",
+    "start_date",
+    "end_date",
+    "budget",
+    "spent_amount",
+    "campaign_description",
+    "promotional_offer",
+    "discount_percentage",
+    "discount_amount",
+    "minimum_order_value",
+    "communication_channels",
+    "email_template",
+    "sms_template",
+    "social_media_content",
+    "target_metrics",
+    "actual_metrics",
+    "response_rate",
+    "conversion_rate",
+    "roi_percentage",
+    "customers_reached",
+    "customers_engaged",
+    "orders_generated",
+    "revenue_generated",
+    "campaign_manager",
+    "approval_status",
+    "approved_by",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "campaign_id",
+      "fieldtype": "Data",
+      "label": "Campaign ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "campaign_name",
+      "fieldtype": "Data",
+      "label": "Campaign Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "campaign_type",
+      "fieldtype": "Select",
+      "label": "Campaign Type",
+      "options": "Promotional\nSeasonal\nLoyalty Boost\nNew Customer Acquisition\nWin-back\nEvent Marketing\nProduct Launch\nHappy Hour\nBirthday Special\nAnniversary Special",
+      "reqd": 1
+    },
+    {
+      "fieldname": "campaign_status",
+      "fieldtype": "Select",
+      "label": "Campaign Status",
+      "options": "Draft\nApproved\nActive\nPaused\nCompleted\nCancelled",
+      "default": "Draft"
+    },
+    {
+      "fieldname": "target_audience",
+      "fieldtype": "Select",
+      "label": "Target Audience",
+      "options": "All Customers\nLoyal Customers\nVIP Customers\nNew Customers\nInactive Customers\nBirthday Customers\nAnniversary Customers\nCustom Segment"
+    },
+    {
+      "fieldname": "customer_segment",
+      "fieldtype": "Text",
+      "label": "Customer Segment Details"
+    },
+    {
+      "fieldname": "start_date",
+      "fieldtype": "Date",
+      "label": "Start Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "end_date",
+      "fieldtype": "Date",
+      "label": "End Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "budget",
+      "fieldtype": "Currency",
+      "label": "Campaign Budget"
+    },
+    {
+      "fieldname": "spent_amount",
+      "fieldtype": "Currency",
+      "label": "Amount Spent",
+      "default": 0
+    },
+    {
+      "fieldname": "campaign_description",
+      "fieldtype": "Text",
+      "label": "Campaign Description"
+    },
+    {
+      "fieldname": "promotional_offer",
+      "fieldtype": "Text",
+      "label": "Promotional Offer Details"
+    },
+    {
+      "fieldname": "discount_percentage",
+      "fieldtype": "Float",
+      "label": "Discount Percentage"
+    },
+    {
+      "fieldname": "discount_amount",
+      "fieldtype": "Currency",
+      "label": "Discount Amount"
+    },
+    {
+      "fieldname": "minimum_order_value",
+      "fieldtype": "Currency",
+      "label": "Minimum Order Value"
+    },
+    {
+      "fieldname": "communication_channels",
+      "fieldtype": "Text",
+      "label": "Communication Channels (JSON)"
+    },
+    {
+      "fieldname": "email_template",
+      "fieldtype": "Text",
+      "label": "Email Template"
+    },
+    {
+      "fieldname": "sms_template",
+      "fieldtype": "Text",
+      "label": "SMS Template"
+    },
+    {
+      "fieldname": "social_media_content",
+      "fieldtype": "Text",
+      "label": "Social Media Content"
+    },
+    {
+      "fieldname": "target_metrics",
+      "fieldtype": "Text",
+      "label": "Target Metrics (JSON)"
+    },
+    {
+      "fieldname": "actual_metrics",
+      "fieldtype": "Text",
+      "label": "Actual Metrics (JSON)"
+    },
+    {
+      "fieldname": "response_rate",
+      "fieldtype": "Float",
+      "label": "Response Rate (%)"
+    },
+    {
+      "fieldname": "conversion_rate",
+      "fieldtype": "Float",
+      "label": "Conversion Rate (%)"
+    },
+    {
+      "fieldname": "roi_percentage",
+      "fieldtype": "Float",
+      "label": "ROI Percentage"
+    },
+    {
+      "fieldname": "customers_reached",
+      "fieldtype": "Int",
+      "label": "Customers Reached"
+    },
+    {
+      "fieldname": "customers_engaged",
+      "fieldtype": "Int",
+      "label": "Customers Engaged"
+    },
+    {
+      "fieldname": "orders_generated",
+      "fieldtype": "Int",
+      "label": "Orders Generated"
+    },
+    {
+      "fieldname": "revenue_generated",
+      "fieldtype": "Currency",
+      "label": "Revenue Generated"
+    },
+    {
+      "fieldname": "campaign_manager",
+      "fieldtype": "Data",
+      "label": "Campaign Manager"
+    },
+    {
+      "fieldname": "approval_status",
+      "fieldtype": "Select",
+      "label": "Approval Status",
+      "options": "Pending\nApproved\nRejected",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Data",
+      "label": "Approved By"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Campaign Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 16:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Marketing Campaign",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "campaign_name"
+}

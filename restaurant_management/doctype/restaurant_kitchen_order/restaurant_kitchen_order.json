@@ -1,0 +1,192 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 14:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "kitchen_order_id",
+    "order_id",
+    "table_number",
+    "customer_name",
+    "order_priority",
+    "preparation_status",
+    "kitchen_station",
+    "assigned_chef",
+    "order_received_time",
+    "preparation_start_time",
+    "estimated_completion_time",
+    "actual_completion_time",
+    "preparation_duration",
+    "special_instructions",
+    "dietary_restrictions",
+    "order_items",
+    "kitchen_notes",
+    "quality_check_passed",
+    "ready_for_service",
+    "served_time",
+    "delay_reason",
+    "rush_order"
+  ],
+  "fields": [
+    {
+      "fieldname": "kitchen_order_id",
+      "fieldtype": "Data",
+      "label": "Kitchen Order ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "order_id",
+      "fieldtype": "Data",
+      "label": "Order ID",
+      "reqd": 1
+    },
+    {
+      "fieldname": "table_number",
+      "fieldtype": "Data",
+      "label": "Table Number"
+    },
+    {
+      "fieldname": "customer_name",
+      "fieldtype": "Data",
+      "label": "Customer Name"
+    },
+    {
+      "fieldname": "order_priority",
+      "fieldtype": "Select",
+      "label": "Order Priority",
+      "options": "Low\nNormal\nHigh\nRush\nVIP",
+      "default": "Normal"
+    },
+    {
+      "fieldname": "preparation_status",
+      "fieldtype": "Select",
+      "label": "Preparation Status",
+      "options": "Received\nIn Preparation\nAlmost Ready\nReady\nServed\nCancelled",
+      "default": "Received"
+    },
+    {
+      "fieldname": "kitchen_station",
+      "fieldtype": "Select",
+      "label": "Kitchen Station",
+      "options": "Cold Station\nHot Station\nGrill Station\nSaute Station\nPizza Station\nDessert Station\nBar\nExpo Station"
+    },
+    {
+      "fieldname": "assigned_chef",
+      "fieldtype": "Data",
+      "label": "Assigned Chef"
+    },
+    {
+      "fieldname": "order_received_time",
+      "fieldtype": "Datetime",
+      "label": "Order Received Time",
+      "reqd": 1
+    },
+    {
+      "fieldname": "preparation_start_time",
+      "fieldtype": "Datetime",
+      "label": "Preparation Start Time"
+    },
+    {
+      "fieldname": "estimated_completion_time",
+      "fieldtype": "Datetime",
+      "label": "Estimated Completion Time"
+    },
+    {
+      "fieldname": "actual_completion_time",
+      "fieldtype": "Datetime",
+      "label": "Actual Completion Time"
+    },
+    {
+      "fieldname": "preparation_duration",
+      "fieldtype": "Float",
+      "label": "Preparation Duration (Minutes)"
+    },
+    {
+      "fieldname": "special_instructions",
+      "fieldtype": "Text",
+      "label": "Special Instructions"
+    },
+    {
+      "fieldname": "dietary_restrictions",
+      "fieldtype": "Text",
+      "label": "Dietary Restrictions"
+    },
+    {
+      "fieldname": "order_items",
+      "fieldtype": "Text",
+      "label": "Order Items (JSON)"
+    },
+    {
+      "fieldname": "kitchen_notes",
+      "fieldtype": "Text",
+      "label": "Kitchen Notes"
+    },
+    {
+      "fieldname": "quality_check_passed",
+      "fieldtype": "Check",
+      "label": "Quality Check Passed",
+      "default": 0
+    },
+    {
+      "fieldname": "ready_for_service",
+      "fieldtype": "Check",
+      "label": "Ready for Service",
+      "default": 0
+    },
+    {
+      "fieldname": "served_time",
+      "fieldtype": "Datetime",
+      "label": "Served Time"
+    },
+    {
+      "fieldname": "delay_reason",
+      "fieldtype": "Text",
+      "label": "Delay Reason"
+    },
+    {
+      "fieldname": "rush_order",
+      "fieldtype": "Check",
+      "label": "Rush Order",
+      "default": 0
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 14:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Kitchen Order",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "kitchen_order_id"
+}

@@ -1,0 +1,210 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 16:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "communication_id",
+    "communication_type",
+    "communication_status",
+    "campaign_id",
+    "customer_id",
+    "customer_name",
+    "customer_email",
+    "customer_phone",
+    "channel",
+    "subject",
+    "message_content",
+    "template_used",
+    "personalization_data",
+    "scheduled_datetime",
+    "sent_datetime",
+    "delivery_status",
+    "opened_datetime",
+    "clicked_datetime",
+    "response_received",
+    "response_content",
+    "bounce_reason",
+    "unsubscribed",
+    "cost",
+    "sent_by",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "communication_id",
+      "fieldtype": "Data",
+      "label": "Communication ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "communication_type",
+      "fieldtype": "Select",
+      "label": "Communication Type",
+      "options": "Marketing\nTransactional\nNotification\nReminder\nSurvey\nFeedback Request\nPromotional\nWelcome\nBirthday\nAnniversary",
+      "reqd": 1
+    },
+    {
+      "fieldname": "communication_status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nScheduled\nSent\nDelivered\nOpened\nClicked\nBounced\nFailed\nUnsubscribed",
+      "default": "Draft"
+    },
+    {
+      "fieldname": "campaign_id",
+      "fieldtype": "Data",
+      "label": "Campaign ID"
+    },
+    {
+      "fieldname": "customer_id",
+      "fieldtype": "Data",
+      "label": "Customer ID"
+    },
+    {
+      "fieldname": "customer_name",
+      "fieldtype": "Data",
+      "label": "Customer Name"
+    },
+    {
+      "fieldname": "customer_email",
+      "fieldtype": "Data",
+      "label": "Customer Email"
+    },
+    {
+      "fieldname": "customer_phone",
+      "fieldtype": "Data",
+      "label": "Customer Phone"
+    },
+    {
+      "fieldname": "channel",
+      "fieldtype": "Select",
+      "label": "Communication Channel",
+      "options": "Email\nSMS\nWhatsApp\nPush Notification\nIn-App Message\nSocial Media\nDirect Mail",
+      "reqd": 1
+    },
+    {
+      "fieldname": "subject",
+      "fieldtype": "Data",
+      "label": "Subject/Title"
+    },
+    {
+      "fieldname": "message_content",
+      "fieldtype": "Text",
+      "label": "Message Content",
+      "reqd": 1
+    },
+    {
+      "fieldname": "template_used",
+      "fieldtype": "Data",
+      "label": "Template Used"
+    },
+    {
+      "fieldname": "personalization_data",
+      "fieldtype": "Text",
+      "label": "Personalization Data (JSON)"
+    },
+    {
+      "fieldname": "scheduled_datetime",
+      "fieldtype": "Datetime",
+      "label": "Scheduled Date & Time"
+    },
+    {
+      "fieldname": "sent_datetime",
+      "fieldtype": "Datetime",
+      "label": "Sent Date & Time"
+    },
+    {
+      "fieldname": "delivery_status",
+      "fieldtype": "Select",
+      "label": "Delivery Status",
+      "options": "Pending\nDelivered\nFailed\nBounced\nUnsubscribed"
+    },
+    {
+      "fieldname": "opened_datetime",
+      "fieldtype": "Datetime",
+      "label": "Opened Date & Time"
+    },
+    {
+      "fieldname": "clicked_datetime",
+      "fieldtype": "Datetime",
+      "label": "Clicked Date & Time"
+    },
+    {
+      "fieldname": "response_received",
+      "fieldtype": "Check",
+      "label": "Response Received",
+      "default": 0
+    },
+    {
+      "fieldname": "response_content",
+      "fieldtype": "Text",
+      "label": "Response Content"
+    },
+    {
+      "fieldname": "bounce_reason",
+      "fieldtype": "Text",
+      "label": "Bounce Reason"
+    },
+    {
+      "fieldname": "unsubscribed",
+      "fieldtype": "Check",
+      "label": "Unsubscribed",
+      "default": 0
+    },
+    {
+      "fieldname": "cost",
+      "fieldtype": "Currency",
+      "label": "Communication Cost"
+    },
+    {
+      "fieldname": "sent_by",
+      "fieldtype": "Data",
+      "label": "Sent By"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 16:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Customer Communication",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "communication_id"
+}

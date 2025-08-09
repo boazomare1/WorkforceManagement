@@ -1,0 +1,207 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 14:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_code",
+    "item_name",
+    "category",
+    "unit_of_measure",
+    "current_stock",
+    "minimum_stock_level",
+    "maximum_stock_level",
+    "reorder_point",
+    "reorder_quantity",
+    "cost_per_unit",
+    "supplier_name",
+    "supplier_contact",
+    "last_restock_date",
+    "last_restock_quantity",
+    "expiry_date",
+    "storage_location",
+    "storage_requirements",
+    "menu_items_using",
+    "consumption_rate",
+    "lead_time_days",
+    "auto_reorder_enabled",
+    "perishable",
+    "allergen_info",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Data",
+      "label": "Item Code",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "label": "Item Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "category",
+      "fieldtype": "Select",
+      "label": "Category",
+      "options": "Vegetables\nFruits\nMeat\nSeafood\nDairy\nGrains\nSpices\nBeverages\nAlcohol\nCleaning Supplies\nPackaging\nOther",
+      "reqd": 1
+    },
+    {
+      "fieldname": "unit_of_measure",
+      "fieldtype": "Select",
+      "label": "Unit of Measure",
+      "options": "Kg\nLb\nL\nGal\nPcs\nBox\nCase\nBottle\nCan\nBag",
+      "reqd": 1
+    },
+    {
+      "fieldname": "current_stock",
+      "fieldtype": "Float",
+      "label": "Current Stock",
+      "default": 0
+    },
+    {
+      "fieldname": "minimum_stock_level",
+      "fieldtype": "Float",
+      "label": "Minimum Stock Level",
+      "reqd": 1
+    },
+    {
+      "fieldname": "maximum_stock_level",
+      "fieldtype": "Float",
+      "label": "Maximum Stock Level"
+    },
+    {
+      "fieldname": "reorder_point",
+      "fieldtype": "Float",
+      "label": "Reorder Point",
+      "reqd": 1
+    },
+    {
+      "fieldname": "reorder_quantity",
+      "fieldtype": "Float",
+      "label": "Reorder Quantity",
+      "reqd": 1
+    },
+    {
+      "fieldname": "cost_per_unit",
+      "fieldtype": "Currency",
+      "label": "Cost per Unit"
+    },
+    {
+      "fieldname": "supplier_name",
+      "fieldtype": "Data",
+      "label": "Primary Supplier"
+    },
+    {
+      "fieldname": "supplier_contact",
+      "fieldtype": "Data",
+      "label": "Supplier Contact"
+    },
+    {
+      "fieldname": "last_restock_date",
+      "fieldtype": "Date",
+      "label": "Last Restock Date"
+    },
+    {
+      "fieldname": "last_restock_quantity",
+      "fieldtype": "Float",
+      "label": "Last Restock Quantity"
+    },
+    {
+      "fieldname": "expiry_date",
+      "fieldtype": "Date",
+      "label": "Expiry Date"
+    },
+    {
+      "fieldname": "storage_location",
+      "fieldtype": "Select",
+      "label": "Storage Location",
+      "options": "Freezer\nRefrigerator\nDry Storage\nWine Cellar\nBar\nCleaning Room\nReceiving Area"
+    },
+    {
+      "fieldname": "storage_requirements",
+      "fieldtype": "Text",
+      "label": "Storage Requirements"
+    },
+    {
+      "fieldname": "menu_items_using",
+      "fieldtype": "Text",
+      "label": "Menu Items Using This Ingredient (JSON)"
+    },
+    {
+      "fieldname": "consumption_rate",
+      "fieldtype": "Float",
+      "label": "Daily Consumption Rate"
+    },
+    {
+      "fieldname": "lead_time_days",
+      "fieldtype": "Int",
+      "label": "Supplier Lead Time (Days)",
+      "default": 3
+    },
+    {
+      "fieldname": "auto_reorder_enabled",
+      "fieldtype": "Check",
+      "label": "Auto Reorder Enabled",
+      "default": 1
+    },
+    {
+      "fieldname": "perishable",
+      "fieldtype": "Check",
+      "label": "Perishable Item",
+      "default": 0
+    },
+    {
+      "fieldname": "allergen_info",
+      "fieldtype": "Text",
+      "label": "Allergen Information"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 14:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Inventory Item",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "item_name"
+}

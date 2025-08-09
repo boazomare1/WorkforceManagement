@@ -3483,3 +3483,1978 @@ def calculate_engagement_level(customer, orders, feedback):
         return "Moderately Engaged"
     else:
         return "Low Engagement"
+
+
+# ============================================================================
+# KITCHEN DISPLAY SYSTEM
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def send_to_kitchen(order_id):
+    """Send order to kitchen display system"""
+    try:
+        order = frappe.get_doc("Restaurant Order", order_id)
+        
+        # Create kitchen order entry
+        kitchen_order_id = f"KIT-{frappe.utils.now()[:10].replace('-', '')}-{frappe.utils.random_string(4).upper()}"
+        
+        # Determine order priority
+        priority = determine_order_priority(order)
+        
+        # Calculate estimated completion time
+        estimated_time = calculate_kitchen_time(order)
+        
+        kitchen_order = frappe.get_doc({
+            "doctype": "Restaurant Kitchen Order",
+            "kitchen_order_id": kitchen_order_id,
+            "order_id": order.order_id,
+            "table_number": order.table_number,
+            "customer_name": order.customer_name,
+            "order_priority": priority,
+            "preparation_status": "Received",
+            "kitchen_station": assign_kitchen_station(order),
+            "order_received_time": frappe.utils.now(),
+            "estimated_completion_time": estimated_time,
+            "special_instructions": order.special_instructions,
+            "order_items": json.dumps(get_order_items_for_kitchen(order)),
+            "rush_order": priority in ["Rush", "VIP"]
+        })
+        
+        kitchen_order.insert()
+        
+        # Update inventory for order items
+        update_inventory_for_order(order)
+        
+        # Notify kitchen staff (simulate)
+        notify_kitchen_staff(kitchen_order)
+        
+        return {
+            "success": True,
+            "message": "Order sent to kitchen successfully",
+            "data": {
+                "kitchen_order_id": kitchen_order_id,
+                "priority": priority,
+                "estimated_completion": estimated_time,
+                "assigned_station": kitchen_order.kitchen_station
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error sending order to kitchen: {str(e)}"
+        }
+
+def determine_order_priority(order):
+    """Determine order priority based on various factors"""
+    # VIP customers get high priority
+    if hasattr(order, 'customer_id'):
+        try:
+            customer = frappe.get_doc("Restaurant Customer Profile", order.customer_id)
+            if customer.vip_status or customer.membership_tier in ["Platinum", "VIP", "Founder"]:
+                return "VIP"
+        except:
+            pass
+    
+    # Large orders get higher priority
+    if order.total_amount > 200:
+        return "High"
+    
+    # Check for rush requests
+    if hasattr(order, 'rush_order') and order.rush_order:
+        return "Rush"
+    
+    return "Normal"
+
+def calculate_kitchen_time(order):
+    """Calculate estimated kitchen preparation time"""
+    base_time = 15  # Base 15 minutes
+    
+    # Add time based on number of items
+    item_count = len(order.items) if hasattr(order, 'items') else 1
+    additional_time = item_count * 3  # 3 minutes per item
+    
+    # Add complexity factor for certain items
+    complexity_time = 0
+    # This would analyze menu items for complexity
+    
+    total_minutes = base_time + additional_time + complexity_time
+    
+    # Calculate estimated completion time
+    completion_time = frappe.utils.add_to_date(
+        frappe.utils.now(), 
+        minutes=total_minutes
+    )
+    
+    return completion_time
+
+def assign_kitchen_station(order):
+    """Assign order to appropriate kitchen station"""
+    # Simple assignment logic - would be more sophisticated in reality
+    stations = ["Hot Station", "Cold Station", "Grill Station", "Saute Station"]
+    
+    # For now, assign based on order size
+    if len(order.items) <= 2:
+        return "Cold Station"
+    elif len(order.items) <= 4:
+        return "Hot Station"
+    else:
+        return "Grill Station"
+
+def get_order_items_for_kitchen(order):
+    """Format order items for kitchen display"""
+    kitchen_items = []
+    
+    for item in order.items:
+        kitchen_items.append({
+            "item_name": item.item_name,
+            "quantity": item.quantity,
+            "special_instructions": getattr(item, 'special_instructions', ''),
+            "cooking_instructions": get_cooking_instructions(item.item_name),
+            "allergens": get_item_allergens(item.item_name)
+        })
+    
+    return kitchen_items
+
+@frappe.whitelist(allow_guest=True)
+def update_kitchen_order_status(kitchen_order_id, new_status, chef_notes=None):
+    """Update kitchen order status"""
+    try:
+        kitchen_order = frappe.get_doc("Restaurant Kitchen Order", kitchen_order_id)
+        
+        old_status = kitchen_order.preparation_status
+        kitchen_order.preparation_status = new_status
+        
+        # Update timestamps based on status
+        current_time = frappe.utils.now()
+        
+        if new_status == "In Preparation" and old_status == "Received":
+            kitchen_order.preparation_start_time = current_time
+        
+        elif new_status == "Ready" and old_status in ["In Preparation", "Almost Ready"]:
+            kitchen_order.actual_completion_time = current_time
+            kitchen_order.quality_check_passed = 1
+            kitchen_order.ready_for_service = 1
+            
+            # Calculate actual preparation time
+            if kitchen_order.preparation_start_time:
+                start_time = frappe.utils.get_datetime(kitchen_order.preparation_start_time)
+                end_time = frappe.utils.get_datetime(current_time)
+                duration = (end_time - start_time).total_seconds() / 60
+                kitchen_order.preparation_duration = duration
+        
+        elif new_status == "Served":
+            kitchen_order.served_time = current_time
+        
+        if chef_notes:
+            kitchen_order.kitchen_notes = chef_notes
+        
+        kitchen_order.save()
+        
+        # Notify front of house if order is ready
+        if new_status == "Ready":
+            notify_front_of_house(kitchen_order)
+        
+        return {
+            "success": True,
+            "message": f"Kitchen order status updated to {new_status}",
+            "data": {
+                "kitchen_order_id": kitchen_order_id,
+                "new_status": new_status,
+                "preparation_duration": kitchen_order.preparation_duration
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error updating kitchen order status: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_kitchen_display_orders(station=None, status=None):
+    """Get orders for kitchen display"""
+    try:
+        filters = {}
+        
+        if station:
+            filters["kitchen_station"] = station
+        
+        if status:
+            filters["preparation_status"] = status
+        else:
+            # Show active orders (not served or cancelled)
+            filters["preparation_status"] = ["not in", ["Served", "Cancelled"]]
+        
+        orders = frappe.get_all("Restaurant Kitchen Order",
+            filters=filters,
+            fields=[
+                "kitchen_order_id", "order_id", "table_number", "customer_name",
+                "order_priority", "preparation_status", "kitchen_station",
+                "order_received_time", "estimated_completion_time", "actual_completion_time",
+                "special_instructions", "order_items", "rush_order", "preparation_duration"
+            ],
+            order_by="order_priority desc, order_received_time asc"
+        )
+        
+        # Calculate wait times and add urgency indicators
+        for order in orders:
+            order["wait_time"] = calculate_wait_time(order["order_received_time"])
+            order["urgency_level"] = determine_urgency(order)
+            order["order_items_parsed"] = json.loads(order["order_items"]) if order["order_items"] else []
+        
+        # Group by station for display
+        orders_by_station = {}
+        for order in orders:
+            station = order["kitchen_station"]
+            if station not in orders_by_station:
+                orders_by_station[station] = []
+            orders_by_station[station].append(order)
+        
+        return {
+            "success": True,
+            "data": {
+                "orders": orders,
+                "orders_by_station": orders_by_station,
+                "total_active_orders": len(orders)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting kitchen display orders: {str(e)}"
+        }
+
+
+# ============================================================================
+# INVENTORY MANAGEMENT SYSTEM
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def add_inventory_item(item_data):
+    """Add new inventory item"""
+    try:
+        data = json.loads(item_data) if isinstance(item_data, str) else item_data
+        
+        item_code = data.get("item_code") or generate_item_code(data["item_name"])
+        
+        inventory_item = frappe.get_doc({
+            "doctype": "Restaurant Inventory Item",
+            "item_code": item_code,
+            "item_name": data["item_name"],
+            "category": data["category"],
+            "unit_of_measure": data["unit_of_measure"],
+            "current_stock": data.get("current_stock", 0),
+            "minimum_stock_level": data["minimum_stock_level"],
+            "maximum_stock_level": data.get("maximum_stock_level"),
+            "reorder_point": data["reorder_point"],
+            "reorder_quantity": data["reorder_quantity"],
+            "cost_per_unit": data.get("cost_per_unit"),
+            "supplier_name": data.get("supplier_name"),
+            "supplier_contact": data.get("supplier_contact"),
+            "storage_location": data.get("storage_location"),
+            "storage_requirements": data.get("storage_requirements"),
+            "consumption_rate": data.get("consumption_rate"),
+            "lead_time_days": data.get("lead_time_days", 3),
+            "auto_reorder_enabled": data.get("auto_reorder_enabled", 1),
+            "perishable": data.get("perishable", 0),
+            "allergen_info": data.get("allergen_info"),
+            "notes": data.get("notes")
+        })
+        
+        inventory_item.insert()
+        
+        return {
+            "success": True,
+            "message": "Inventory item added successfully",
+            "data": {
+                "item_code": item_code,
+                "item_name": data["item_name"]
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error adding inventory item: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def update_inventory_stock(item_code, transaction_data):
+    """Update inventory stock with transaction logging"""
+    try:
+        data = json.loads(transaction_data) if isinstance(transaction_data, str) else transaction_data
+        
+        # Get inventory item
+        inventory_item = frappe.get_doc("Restaurant Inventory Item", item_code)
+        
+        transaction_type = data["transaction_type"]
+        quantity = float(data["quantity"])
+        
+        # Calculate new stock level
+        if transaction_type in ["Stock In", "Stock Adjustment"]:
+            new_stock = inventory_item.current_stock + quantity
+        elif transaction_type in ["Stock Out", "Waste"]:
+            new_stock = inventory_item.current_stock - quantity
+        else:
+            new_stock = inventory_item.current_stock
+        
+        # Validate stock levels
+        if new_stock < 0:
+            return {
+                "success": False,
+                "message": f"Insufficient stock. Current: {inventory_item.current_stock}, Requested: {quantity}"
+            }
+        
+        # Create transaction record
+        transaction_id = f"TXN-{frappe.utils.now()[:10].replace('-', '')}-{frappe.utils.random_string(6).upper()}"
+        
+        transaction = frappe.get_doc({
+            "doctype": "Restaurant Inventory Transaction",
+            "transaction_id": transaction_id,
+            "item_code": item_code,
+            "item_name": inventory_item.item_name,
+            "transaction_type": transaction_type,
+            "quantity": quantity,
+            "unit_cost": data.get("unit_cost"),
+            "total_cost": data.get("total_cost"),
+            "transaction_date": frappe.utils.nowdate(),
+            "transaction_time": frappe.utils.nowtime(),
+            "reference_document": data.get("reference_document"),
+            "supplier_name": data.get("supplier_name"),
+            "batch_number": data.get("batch_number"),
+            "expiry_date": data.get("expiry_date"),
+            "storage_location": data.get("storage_location"),
+            "performed_by": data["performed_by"],
+            "notes": data.get("notes")
+        })
+        
+        transaction.insert()
+        
+        # Update inventory item
+        inventory_item.current_stock = new_stock
+        
+        if transaction_type == "Stock In":
+            inventory_item.last_restock_date = frappe.utils.nowdate()
+            inventory_item.last_restock_quantity = quantity
+        
+        inventory_item.save()
+        
+        # Check for reorder alerts
+        reorder_alert = check_reorder_requirement(inventory_item)
+        
+        return {
+            "success": True,
+            "message": "Inventory updated successfully",
+            "data": {
+                "transaction_id": transaction_id,
+                "new_stock_level": new_stock,
+                "reorder_alert": reorder_alert
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error updating inventory: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_inventory_status(category=None, low_stock_only=False):
+    """Get current inventory status"""
+    try:
+        filters = {}
+        
+        if category:
+            filters["category"] = category
+        
+        items = frappe.get_all("Restaurant Inventory Item",
+            filters=filters,
+            fields=[
+                "item_code", "item_name", "category", "unit_of_measure",
+                "current_stock", "minimum_stock_level", "reorder_point",
+                "cost_per_unit", "supplier_name", "expiry_date", "perishable",
+                "auto_reorder_enabled", "last_restock_date"
+            ]
+        )
+        
+        # Add status indicators
+        for item in items:
+            item["stock_status"] = get_stock_status(item)
+            item["days_until_expiry"] = calculate_days_until_expiry(item.get("expiry_date"))
+            item["estimated_stock_days"] = calculate_estimated_stock_days(item)
+        
+        # Filter for low stock if requested
+        if low_stock_only:
+            items = [item for item in items if item["stock_status"] in ["Low Stock", "Out of Stock", "Reorder Required"]]
+        
+        # Group by category
+        items_by_category = {}
+        for item in items:
+            category = item["category"]
+            if category not in items_by_category:
+                items_by_category[category] = []
+            items_by_category[category].append(item)
+        
+        # Calculate summary statistics
+        total_items = len(items)
+        low_stock_items = len([item for item in items if item["stock_status"] == "Low Stock"])
+        out_of_stock_items = len([item for item in items if item["stock_status"] == "Out of Stock"])
+        reorder_required = len([item for item in items if item["stock_status"] == "Reorder Required"])
+        
+        return {
+            "success": True,
+            "data": {
+                "items": items,
+                "items_by_category": items_by_category,
+                "summary": {
+                    "total_items": total_items,
+                    "low_stock_items": low_stock_items,
+                    "out_of_stock_items": out_of_stock_items,
+                    "reorder_required": reorder_required
+                }
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting inventory status: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def auto_reorder_inventory():
+    """Automatically create reorder suggestions"""
+    try:
+        # Get items that need reordering
+        items_to_reorder = frappe.get_all("Restaurant Inventory Item",
+            filters={
+                "auto_reorder_enabled": 1,
+                "current_stock": ["<=", "reorder_point"]
+            },
+            fields=[
+                "item_code", "item_name", "current_stock", "reorder_point",
+                "reorder_quantity", "supplier_name", "supplier_contact",
+                "cost_per_unit", "lead_time_days"
+            ]
+        )
+        
+        reorder_suggestions = []
+        
+        for item in items_to_reorder:
+            # Calculate recommended order quantity
+            recommended_qty = calculate_recommended_order_quantity(item)
+            
+            # Estimate cost
+            estimated_cost = recommended_qty * (item.get("cost_per_unit") or 0)
+            
+            suggestion = {
+                "item_code": item.item_code,
+                "item_name": item.item_name,
+                "current_stock": item.current_stock,
+                "reorder_point": item.reorder_point,
+                "recommended_quantity": recommended_qty,
+                "supplier_name": item.supplier_name,
+                "estimated_cost": estimated_cost,
+                "urgency": get_reorder_urgency(item),
+                "expected_delivery": frappe.utils.add_days(frappe.utils.nowdate(), item.lead_time_days)
+            }
+            
+            reorder_suggestions.append(suggestion)
+        
+        # Sort by urgency
+        reorder_suggestions.sort(key=lambda x: ["High", "Medium", "Low"].index(x["urgency"]))
+        
+        return {
+            "success": True,
+            "data": {
+                "reorder_suggestions": reorder_suggestions,
+                "total_items_to_reorder": len(reorder_suggestions),
+                "total_estimated_cost": sum(item["estimated_cost"] for item in reorder_suggestions)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error generating auto reorder: {str(e)}"
+        }
+
+
+# ============================================================================
+# COMPREHENSIVE REPORTING SYSTEM
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def get_daily_operations_report(date=None):
+    """Get comprehensive daily operations report"""
+    try:
+        if not date:
+            date = frappe.utils.nowdate()
+        
+        # Sales Summary
+        sales_data = get_daily_sales_summary(date)
+        
+        # Kitchen Performance
+        kitchen_data = get_kitchen_performance_report(date)
+        
+        # Staff Performance
+        staff_data = get_staff_performance_report(date)
+        
+        # Customer Feedback Summary
+        feedback_data = get_daily_feedback_summary(date)
+        
+        # Inventory Status
+        inventory_data = get_inventory_alerts()
+        
+        # Table Utilization
+        table_data = get_table_utilization_report(date)
+        
+        return {
+            "success": True,
+            "data": {
+                "report_date": date,
+                "sales_summary": sales_data,
+                "kitchen_performance": kitchen_data,
+                "staff_performance": staff_data,
+                "customer_feedback": feedback_data,
+                "inventory_alerts": inventory_data,
+                "table_utilization": table_data,
+                "generated_at": frappe.utils.now()
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error generating daily report: {str(e)}"
+        }
+
+def get_daily_sales_summary(date):
+    """Get daily sales summary"""
+    try:
+        # Get all orders for the date
+        orders = frappe.get_all("Restaurant Order",
+            filters={
+                "order_date": date,
+                "order_status": ["not in", ["Cancelled"]]
+            },
+            fields=["order_id", "total_amount", "payment_method", "order_status", "table_number"]
+        )
+        
+        total_sales = sum(order.total_amount for order in orders)
+        total_orders = len(orders)
+        
+        # Payment method breakdown
+        payment_breakdown = {}
+        for order in orders:
+            method = order.payment_method or "Unknown"
+            if method not in payment_breakdown:
+                payment_breakdown[method] = {"count": 0, "amount": 0}
+            payment_breakdown[method]["count"] += 1
+            payment_breakdown[method]["amount"] += order.total_amount
+        
+        # Calculate average order value
+        avg_order_value = total_sales / total_orders if total_orders > 0 else 0
+        
+        return {
+            "total_sales": total_sales,
+            "total_orders": total_orders,
+            "average_order_value": round(avg_order_value, 2),
+            "payment_breakdown": payment_breakdown
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_kitchen_performance_report(date):
+    """Get kitchen performance metrics"""
+    try:
+        kitchen_orders = frappe.get_all("Restaurant Kitchen Order",
+            filters={
+                "order_received_time": ["like", f"{date}%"]
+            },
+            fields=[
+                "kitchen_order_id", "preparation_status", "preparation_duration",
+                "order_priority", "kitchen_station"
+            ]
+        )
+        
+        total_orders = len(kitchen_orders)
+        completed_orders = len([o for o in kitchen_orders if o.preparation_status in ["Ready", "Served"]])
+        
+        # Calculate average preparation time
+        prep_times = [o.preparation_duration for o in kitchen_orders if o.preparation_duration]
+        avg_prep_time = sum(prep_times) / len(prep_times) if prep_times else 0
+        
+        # Performance by station
+        station_performance = {}
+        for order in kitchen_orders:
+            station = order.kitchen_station
+            if station not in station_performance:
+                station_performance[station] = {"total": 0, "completed": 0}
+            station_performance[station]["total"] += 1
+            if order.preparation_status in ["Ready", "Served"]:
+                station_performance[station]["completed"] += 1
+        
+        return {
+            "total_kitchen_orders": total_orders,
+            "completed_orders": completed_orders,
+            "completion_rate": round((completed_orders / total_orders * 100) if total_orders > 0 else 0, 1),
+            "average_prep_time": round(avg_prep_time, 1),
+            "station_performance": station_performance
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_staff_performance_report(date):
+    """Get staff performance summary"""
+    try:
+        # Get tips for the day
+        tips = frappe.get_all("Restaurant Staff Tips",
+            filters={"tip_date": date},
+            fields=["staff_id", "amount", "tip_type"]
+        )
+        
+        # Calculate tips by staff
+        staff_tips = {}
+        for tip in tips:
+            staff_id = tip.staff_id
+            if staff_id not in staff_tips:
+                staff_tips[staff_id] = {"individual": 0, "pooled": 0, "total": 0}
+            
+            if tip.tip_type == "Individual":
+                staff_tips[staff_id]["individual"] += tip.amount
+            else:
+                staff_tips[staff_id]["pooled"] += tip.amount
+            staff_tips[staff_id]["total"] += tip.amount
+        
+        # Get staff recognition mentions
+        recognitions = frappe.get_all("Restaurant Customer Feedback",
+            filters={
+                "visit_date": date,
+                "staff_member_mentioned": ["is", "set"]
+            },
+            fields=["staff_member_mentioned", "overall_rating"]
+        )
+        
+        recognition_count = {}
+        for rec in recognitions:
+            staff = rec.staff_member_mentioned
+            if staff not in recognition_count:
+                recognition_count[staff] = 0
+            recognition_count[staff] += 1
+        
+        return {
+            "staff_tips": staff_tips,
+            "total_tips_distributed": sum(tip.amount for tip in tips),
+            "staff_recognition": recognition_count
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_daily_feedback_summary(date):
+    """Get daily customer feedback summary"""
+    try:
+        feedback_result = get_feedback_analytics(date, date)
+        return feedback_result.get("data", {}) if feedback_result.get("success") else {"error": "Failed to get feedback data"}
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_inventory_alerts():
+    """Get current inventory alerts"""
+    try:
+        alerts = []
+        
+        # Low stock alerts
+        low_stock_items = frappe.get_all("Restaurant Inventory Item",
+            filters={"current_stock": ["<=", "minimum_stock_level"]},
+            fields=["item_name", "current_stock", "minimum_stock_level"]
+        )
+        
+        for item in low_stock_items:
+            alerts.append({
+                "type": "Low Stock",
+                "item": item.item_name,
+                "current": item.current_stock,
+                "minimum": item.minimum_stock_level,
+                "severity": "High" if item.current_stock == 0 else "Medium"
+            })
+        
+        # Expiring items
+        expiring_items = frappe.get_all("Restaurant Inventory Item",
+            filters={
+                "expiry_date": ["<=", frappe.utils.add_days(frappe.utils.nowdate(), 3)],
+                "perishable": 1
+            },
+            fields=["item_name", "expiry_date", "current_stock"]
+        )
+        
+        for item in expiring_items:
+            days_left = (frappe.utils.getdate(item.expiry_date) - frappe.utils.getdate()).days
+            alerts.append({
+                "type": "Expiring Soon",
+                "item": item.item_name,
+                "expiry_date": item.expiry_date,
+                "days_left": days_left,
+                "severity": "High" if days_left <= 1 else "Medium"
+            })
+        
+        return {
+            "alerts": alerts,
+            "total_alerts": len(alerts),
+            "high_priority": len([a for a in alerts if a["severity"] == "High"])
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_table_utilization_report(date):
+    """Get table utilization metrics"""
+    try:
+        bookings = frappe.get_all("Restaurant Table Booking",
+            filters={"booking_date": date},
+            fields=["table_number", "party_size", "booking_time", "duration", "status"]
+        )
+        
+        # Calculate utilization metrics
+        total_bookings = len(bookings)
+        confirmed_bookings = len([b for b in bookings if b.status == "Confirmed"])
+        
+        # Average party size
+        avg_party_size = sum(b.party_size for b in bookings) / total_bookings if total_bookings > 0 else 0
+        
+        return {
+            "total_bookings": total_bookings,
+            "confirmed_bookings": confirmed_bookings,
+            "booking_rate": round((confirmed_bookings / total_bookings * 100) if total_bookings > 0 else 0, 1),
+            "average_party_size": round(avg_party_size, 1)
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
+
+# ============================================================================
+# HELPER FUNCTIONS FOR KITCHEN, INVENTORY & REPORTING
+# ============================================================================
+
+def generate_item_code(item_name):
+    """Generate unique item code"""
+    # Create code from first 3 letters + random string
+    prefix = ''.join([c for c in item_name.upper() if c.isalpha()])[:3]
+    suffix = frappe.utils.random_string(4).upper()
+    return f"{prefix}-{suffix}"
+
+def get_cooking_instructions(item_name):
+    """Get cooking instructions for menu item"""
+    # This would be populated from menu item master data
+    cooking_instructions = {
+        "Grilled Chicken": "Cook on medium heat for 8-10 minutes each side",
+        "Caesar Salad": "Toss with dressing just before serving",
+        "Pasta": "Cook al dente, 8-12 minutes depending on type"
+    }
+    return cooking_instructions.get(item_name, "Follow standard preparation")
+
+def get_item_allergens(item_name):
+    """Get allergen information for menu item"""
+    # This would be populated from menu item master data
+    allergens = {
+        "Caesar Salad": ["Eggs", "Dairy", "Gluten"],
+        "Pasta": ["Gluten", "Eggs"],
+        "Seafood Platter": ["Seafood", "Shellfish"]
+    }
+    return allergens.get(item_name, [])
+
+def update_inventory_for_order(order):
+    """Update inventory levels when order is sent to kitchen"""
+    try:
+        # This would map menu items to inventory ingredients
+        # For now, simulate inventory reduction
+        for item in order.items:
+            # Get ingredients for this menu item
+            ingredients = get_menu_item_ingredients(item.item_name)
+            
+            for ingredient in ingredients:
+                # Reduce inventory
+                reduce_inventory_stock(ingredient["item_code"], ingredient["quantity"] * item.quantity)
+                
+    except Exception as e:
+        frappe.log_error(f"Error updating inventory for order: {str(e)}")
+
+def get_menu_item_ingredients(item_name):
+    """Get ingredients list for menu item"""
+    # This would be populated from recipe/menu item master
+    recipes = {
+        "Caesar Salad": [
+            {"item_code": "LET-001", "quantity": 0.2},  # 200g lettuce
+            {"item_code": "CHE-001", "quantity": 0.05}, # 50g cheese
+            {"item_code": "CRO-001", "quantity": 0.03}  # 30g croutons
+        ],
+        "Grilled Chicken": [
+            {"item_code": "CHI-001", "quantity": 0.25}, # 250g chicken
+            {"item_code": "OIL-001", "quantity": 0.01}  # 10ml oil
+        ]
+    }
+    return recipes.get(item_name, [])
+
+def reduce_inventory_stock(item_code, quantity):
+    """Reduce inventory stock for ingredient usage"""
+    try:
+        inventory_item = frappe.get_doc("Restaurant Inventory Item", item_code)
+        
+        if inventory_item.current_stock >= quantity:
+            # Create stock out transaction
+            update_inventory_stock(item_code, {
+                "transaction_type": "Stock Out",
+                "quantity": quantity,
+                "performed_by": "KITCHEN_AUTO",
+                "notes": "Automatic reduction for order preparation"
+            })
+        else:
+            # Log low stock alert
+            frappe.log_error(f"Insufficient stock for {item_code}: Available {inventory_item.current_stock}, Required {quantity}", "Low Stock Alert")
+            
+    except Exception as e:
+        frappe.log_error(f"Error reducing inventory stock: {str(e)}")
+
+def notify_kitchen_staff(kitchen_order):
+    """Notify kitchen staff of new order"""
+    # This would integrate with notification system
+    frappe.log_error(f"New kitchen order: {kitchen_order.kitchen_order_id}", "Kitchen Notification")
+
+def notify_front_of_house(kitchen_order):
+    """Notify front of house that order is ready"""
+    # This would integrate with notification system
+    frappe.log_error(f"Order ready for service: {kitchen_order.kitchen_order_id}", "Service Notification")
+
+def calculate_wait_time(order_received_time):
+    """Calculate how long order has been waiting"""
+    try:
+        received = frappe.utils.get_datetime(order_received_time)
+        now = frappe.utils.get_datetime(frappe.utils.now())
+        wait_minutes = (now - received).total_seconds() / 60
+        return round(wait_minutes, 1)
+    except:
+        return 0
+
+def determine_urgency(order):
+    """Determine order urgency level"""
+    wait_time = order.get("wait_time", 0)
+    priority = order.get("order_priority", "Normal")
+    
+    if priority in ["Rush", "VIP"] or wait_time > 30:
+        return "High"
+    elif wait_time > 20 or priority == "High":
+        return "Medium"
+    else:
+        return "Low"
+
+def get_stock_status(item):
+    """Determine stock status for inventory item"""
+    current = item["current_stock"]
+    minimum = item["minimum_stock_level"]
+    reorder = item["reorder_point"]
+    
+    if current <= 0:
+        return "Out of Stock"
+    elif current <= reorder:
+        return "Reorder Required"
+    elif current <= minimum:
+        return "Low Stock"
+    else:
+        return "In Stock"
+
+def calculate_days_until_expiry(expiry_date):
+    """Calculate days until item expires"""
+    if not expiry_date:
+        return None
+    
+    try:
+        expiry = frappe.utils.getdate(expiry_date)
+        today = frappe.utils.getdate()
+        return (expiry - today).days
+    except:
+        return None
+
+def calculate_estimated_stock_days(item):
+    """Estimate how many days current stock will last"""
+    try:
+        consumption_rate = item.get("consumption_rate", 0)
+        current_stock = item["current_stock"]
+        
+        if consumption_rate > 0:
+            return round(current_stock / consumption_rate, 1)
+        else:
+            return None
+    except:
+        return None
+
+def check_reorder_requirement(inventory_item):
+    """Check if item needs reordering"""
+    if inventory_item.current_stock <= inventory_item.reorder_point:
+        return {
+            "reorder_required": True,
+            "urgency": "High" if inventory_item.current_stock <= inventory_item.minimum_stock_level else "Medium",
+            "recommended_quantity": inventory_item.reorder_quantity
+        }
+    return {"reorder_required": False}
+
+def calculate_recommended_order_quantity(item):
+    """Calculate recommended reorder quantity"""
+    base_quantity = item.get("reorder_quantity", 0)
+    
+    # Adjust based on consumption rate if available
+    consumption_rate = item.get("consumption_rate", 0)
+    lead_time = item.get("lead_time_days", 3)
+    
+    if consumption_rate > 0:
+        # Order enough for lead time plus safety stock
+        safety_stock = consumption_rate * 2  # 2 days safety stock
+        lead_time_stock = consumption_rate * lead_time
+        recommended = lead_time_stock + safety_stock
+        
+        # Use the higher of base quantity or calculated quantity
+        return max(base_quantity, recommended)
+    
+    return base_quantity
+
+def get_reorder_urgency(item):
+    """Determine reorder urgency"""
+    current = item["current_stock"]
+    reorder_point = item["reorder_point"]
+    consumption_rate = item.get("consumption_rate", 0)
+    
+    if current <= 0:
+        return "High"
+    elif consumption_rate > 0 and current / consumption_rate <= 1:  # Less than 1 day stock
+        return "High"
+    elif current <= reorder_point * 0.5:  # 50% below reorder point
+        return "Medium"
+    else:
+        return "Low"
+
+# ============================================================================
+# ADVANCED REPORTING APIs
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def get_weekly_performance_report(start_date=None):
+    """Get comprehensive weekly performance report"""
+    try:
+        if not start_date:
+            start_date = frappe.utils.add_days(frappe.utils.nowdate(), -7)
+        
+        end_date = frappe.utils.add_days(start_date, 6)
+        
+        # Daily sales trend
+        daily_sales = []
+        current_date = frappe.utils.getdate(start_date)
+        
+        while current_date <= frappe.utils.getdate(end_date):
+            day_sales = get_daily_sales_summary(current_date.strftime("%Y-%m-%d"))
+            daily_sales.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "sales": day_sales.get("total_sales", 0),
+                "orders": day_sales.get("total_orders", 0)
+            })
+            current_date = frappe.utils.add_days(current_date, 1)
+        
+        # Weekly totals
+        total_sales = sum(day["sales"] for day in daily_sales)
+        total_orders = sum(day["orders"] for day in daily_sales)
+        
+        # Top performing items (would need menu item sales tracking)
+        # Customer satisfaction trends
+        # Staff performance comparison
+        
+        return {
+            "success": True,
+            "data": {
+                "period": {"start": start_date, "end": end_date},
+                "daily_sales": daily_sales,
+                "weekly_totals": {
+                    "total_sales": total_sales,
+                    "total_orders": total_orders,
+                    "average_daily_sales": round(total_sales / 7, 2),
+                    "average_daily_orders": round(total_orders / 7, 1)
+                }
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error generating weekly report: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_inventory_valuation_report():
+    """Get inventory valuation and analysis"""
+    try:
+        items = frappe.get_all("Restaurant Inventory Item",
+            fields=[
+                "item_code", "item_name", "category", "current_stock",
+                "cost_per_unit", "supplier_name"
+            ]
+        )
+        
+        # Calculate valuations
+        total_value = 0
+        category_values = {}
+        
+        for item in items:
+            item_value = item["current_stock"] * (item.get("cost_per_unit") or 0)
+            item["total_value"] = item_value
+            total_value += item_value
+            
+            category = item["category"]
+            if category not in category_values:
+                category_values[category] = 0
+            category_values[category] += item_value
+        
+        # Sort by value
+        items.sort(key=lambda x: x["total_value"], reverse=True)
+        
+        return {
+            "success": True,
+            "data": {
+                "items": items,
+                "total_inventory_value": round(total_value, 2),
+                "value_by_category": category_values,
+                "top_value_items": items[:10]
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error generating inventory valuation: {str(e)}"
+        }
+
+
+# ============================================================================
+# MARKETING CAMPAIGN MANAGEMENT SYSTEM
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def create_marketing_campaign(campaign_data):
+    """Create new marketing campaign"""
+    try:
+        data = json.loads(campaign_data) if isinstance(campaign_data, str) else campaign_data
+        
+        campaign_id = f"CAMP-{frappe.utils.now()[:10].replace('-', '')}-{frappe.utils.random_string(4).upper()}"
+        
+        campaign = frappe.get_doc({
+            "doctype": "Restaurant Marketing Campaign",
+            "campaign_id": campaign_id,
+            "campaign_name": data["campaign_name"],
+            "campaign_type": data["campaign_type"],
+            "campaign_status": data.get("campaign_status", "Draft"),
+            "target_audience": data["target_audience"],
+            "customer_segment": data.get("customer_segment"),
+            "start_date": data["start_date"],
+            "end_date": data["end_date"],
+            "budget": data.get("budget"),
+            "campaign_description": data.get("campaign_description"),
+            "promotional_offer": data.get("promotional_offer"),
+            "discount_percentage": data.get("discount_percentage"),
+            "discount_amount": data.get("discount_amount"),
+            "minimum_order_value": data.get("minimum_order_value"),
+            "communication_channels": json.dumps(data.get("communication_channels", [])),
+            "email_template": data.get("email_template"),
+            "sms_template": data.get("sms_template"),
+            "social_media_content": data.get("social_media_content"),
+            "target_metrics": json.dumps(data.get("target_metrics", {})),
+            "campaign_manager": data.get("campaign_manager"),
+            "notes": data.get("notes")
+        })
+        
+        campaign.insert()
+        
+        # Create associated promotion if discount provided
+        if data.get("discount_percentage") or data.get("discount_amount"):
+            create_campaign_promotion(campaign, data)
+        
+        return {
+            "success": True,
+            "message": "Marketing campaign created successfully",
+            "data": {
+                "campaign_id": campaign_id,
+                "campaign_name": data["campaign_name"],
+                "status": campaign.campaign_status
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error creating marketing campaign: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def launch_campaign(campaign_id, launch_data=None):
+    """Launch marketing campaign and send communications"""
+    try:
+        campaign = frappe.get_doc("Restaurant Marketing Campaign", campaign_id)
+        
+        if campaign.campaign_status != "Approved":
+            return {
+                "success": False,
+                "message": "Campaign must be approved before launching"
+            }
+        
+        # Update campaign status
+        campaign.campaign_status = "Active"
+        campaign.save()
+        
+        # Get target customers
+        target_customers = get_campaign_target_customers(campaign)
+        
+        # Send communications
+        communications_sent = 0
+        communication_channels = json.loads(campaign.communication_channels) if campaign.communication_channels else []
+        
+        for customer in target_customers:
+            for channel in communication_channels:
+                if send_campaign_communication(campaign, customer, channel):
+                    communications_sent += 1
+        
+        # Update campaign metrics
+        campaign.customers_reached = len(target_customers)
+        campaign.save()
+        
+        return {
+            "success": True,
+            "message": f"Campaign launched successfully. {communications_sent} communications sent.",
+            "data": {
+                "campaign_id": campaign_id,
+                "customers_reached": len(target_customers),
+                "communications_sent": communications_sent
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error launching campaign: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def create_promotion(promotion_data):
+    """Create new promotion"""
+    try:
+        data = json.loads(promotion_data) if isinstance(promotion_data, str) else promotion_data
+        
+        promotion_id = f"PROMO-{frappe.utils.now()[:10].replace('-', '')}-{frappe.utils.random_string(4).upper()}"
+        promotion_code = data.get("promotion_code") or generate_promotion_code()
+        
+        promotion = frappe.get_doc({
+            "doctype": "Restaurant Promotion",
+            "promotion_id": promotion_id,
+            "promotion_name": data["promotion_name"],
+            "promotion_type": data["promotion_type"],
+            "promotion_code": promotion_code,
+            "promotion_status": data.get("promotion_status", "Draft"),
+            "start_date": data["start_date"],
+            "end_date": data["end_date"],
+            "start_time": data.get("start_time"),
+            "end_time": data.get("end_time"),
+            "applicable_days": json.dumps(data.get("applicable_days", [])),
+            "discount_type": data["discount_type"],
+            "discount_value": data["discount_value"],
+            "minimum_order_amount": data.get("minimum_order_amount"),
+            "maximum_discount_amount": data.get("maximum_discount_amount"),
+            "usage_limit_per_customer": data.get("usage_limit_per_customer"),
+            "total_usage_limit": data.get("total_usage_limit"),
+            "applicable_items": json.dumps(data.get("applicable_items", [])),
+            "excluded_items": json.dumps(data.get("excluded_items", [])),
+            "customer_eligibility": json.dumps(data.get("customer_eligibility", {})),
+            "terms_conditions": data.get("terms_conditions"),
+            "promotion_description": data.get("promotion_description"),
+            "auto_apply": data.get("auto_apply", 0),
+            "stackable_with_other_offers": data.get("stackable_with_other_offers", 0),
+            "created_by": data.get("created_by"),
+            "notes": data.get("notes")
+        })
+        
+        promotion.insert()
+        
+        return {
+            "success": True,
+            "message": "Promotion created successfully",
+            "data": {
+                "promotion_id": promotion_id,
+                "promotion_code": promotion_code,
+                "promotion_name": data["promotion_name"]
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error creating promotion: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def validate_promotion(promotion_code, order_data):
+    """Validate promotion code for order"""
+    try:
+        order_info = json.loads(order_data) if isinstance(order_data, str) else order_data
+        
+        # Get promotion
+        promotion = frappe.get_all("Restaurant Promotion",
+            filters={"promotion_code": promotion_code, "promotion_status": "Active"},
+            fields=["*"],
+            limit=1
+        )
+        
+        if not promotion:
+            return {
+                "success": False,
+                "message": "Invalid or inactive promotion code"
+            }
+        
+        promotion = promotion[0]
+        
+        # Validate dates
+        today = frappe.utils.getdate()
+        if today < frappe.utils.getdate(promotion["start_date"]) or today > frappe.utils.getdate(promotion["end_date"]):
+            return {
+                "success": False,
+                "message": "Promotion has expired or not yet active"
+            }
+        
+        # Validate time (if specified)
+        if promotion.get("start_time") and promotion.get("end_time"):
+            current_time = frappe.utils.nowtime()
+            if current_time < promotion["start_time"] or current_time > promotion["end_time"]:
+                return {
+                    "success": False,
+                    "message": "Promotion not valid at this time"
+                }
+        
+        # Validate day of week (if specified)
+        if promotion.get("applicable_days"):
+            applicable_days = json.loads(promotion["applicable_days"])
+            current_day = frappe.utils.getdate().strftime("%A")
+            if applicable_days and current_day not in applicable_days:
+                return {
+                    "success": False,
+                    "message": f"Promotion not valid on {current_day}"
+                }
+        
+        # Validate minimum order amount
+        order_total = order_info.get("order_total", 0)
+        if promotion.get("minimum_order_amount") and order_total < promotion["minimum_order_amount"]:
+            return {
+                "success": False,
+                "message": f"Minimum order amount ${promotion['minimum_order_amount']} not met"
+            }
+        
+        # Validate usage limits
+        customer_id = order_info.get("customer_id")
+        if customer_id and promotion.get("usage_limit_per_customer"):
+            customer_usage = get_customer_promotion_usage(customer_id, promotion_code)
+            if customer_usage >= promotion["usage_limit_per_customer"]:
+                return {
+                    "success": False,
+                    "message": "Promotion usage limit exceeded for this customer"
+                }
+        
+        if promotion.get("total_usage_limit") and promotion["current_usage_count"] >= promotion["total_usage_limit"]:
+            return {
+                "success": False,
+                "message": "Promotion usage limit exceeded"
+            }
+        
+        # Calculate discount
+        discount_amount = calculate_promotion_discount(promotion, order_info)
+        
+        return {
+            "success": True,
+            "message": "Promotion is valid",
+            "data": {
+                "promotion_id": promotion["promotion_id"],
+                "promotion_name": promotion["promotion_name"],
+                "discount_amount": discount_amount,
+                "promotion_type": promotion["promotion_type"],
+                "terms_conditions": promotion.get("terms_conditions")
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error validating promotion: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def apply_promotion(order_id, promotion_code):
+    """Apply promotion to order"""
+    try:
+        # Get order
+        order = frappe.get_doc("Restaurant Order", order_id)
+        
+        # Validate promotion
+        validation_result = validate_promotion(promotion_code, {
+            "order_total": order.total_amount,
+            "customer_id": getattr(order, 'customer_id', None),
+            "order_items": [{"item_id": item.item_name, "quantity": item.quantity} for item in order.items]
+        })
+        
+        if not validation_result["success"]:
+            return validation_result
+        
+        promotion_data = validation_result["data"]
+        discount_amount = promotion_data["discount_amount"]
+        
+        # Apply discount to order
+        order.discount_amount = (order.discount_amount or 0) + discount_amount
+        order.total_amount = order.total_amount - discount_amount
+        order.promotion_applied = promotion_code
+        order.save()
+        
+        # Update promotion usage
+        update_promotion_usage(promotion_data["promotion_id"])
+        
+        return {
+            "success": True,
+            "message": f"Promotion applied successfully. Discount: ${discount_amount}",
+            "data": {
+                "discount_applied": discount_amount,
+                "new_total": order.total_amount,
+                "promotion_name": promotion_data["promotion_name"]
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error applying promotion: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def send_targeted_communication(communication_data):
+    """Send targeted communication to customers"""
+    try:
+        data = json.loads(communication_data) if isinstance(communication_data, str) else communication_data
+        
+        target_customers = data.get("target_customers", [])
+        if not target_customers:
+            # Get customers based on criteria
+            target_customers = get_customers_by_criteria(data.get("target_criteria", {}))
+        
+        communications_sent = 0
+        failed_communications = 0
+        
+        for customer in target_customers:
+            try:
+                communication_id = f"COMM-{frappe.utils.now()[:10].replace('-', '')}-{frappe.utils.random_string(6).upper()}"
+                
+                # Personalize message
+                personalized_content = personalize_message(data["message_content"], customer)
+                
+                communication = frappe.get_doc({
+                    "doctype": "Restaurant Customer Communication",
+                    "communication_id": communication_id,
+                    "communication_type": data.get("communication_type", "Marketing"),
+                    "communication_status": "Sent",
+                    "campaign_id": data.get("campaign_id"),
+                    "customer_id": customer.get("customer_id"),
+                    "customer_name": customer.get("customer_name"),
+                    "customer_email": customer.get("email"),
+                    "customer_phone": customer.get("phone"),
+                    "channel": data["channel"],
+                    "subject": data.get("subject"),
+                    "message_content": personalized_content,
+                    "template_used": data.get("template_used"),
+                    "personalization_data": json.dumps(customer),
+                    "sent_datetime": frappe.utils.now(),
+                    "delivery_status": "Delivered",  # Simulate successful delivery
+                    "sent_by": data.get("sent_by")
+                })
+                
+                communication.insert()
+                communications_sent += 1
+                
+            except Exception as e:
+                failed_communications += 1
+                frappe.log_error(f"Failed to send communication to {customer.get('customer_name')}: {str(e)}")
+        
+        return {
+            "success": True,
+            "message": f"Communication sent to {communications_sent} customers. {failed_communications} failed.",
+            "data": {
+                "communications_sent": communications_sent,
+                "failed_communications": failed_communications,
+                "total_targeted": len(target_customers)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error sending targeted communication: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_campaign_analytics(campaign_id=None, start_date=None, end_date=None):
+    """Get marketing campaign analytics"""
+    try:
+        filters = {}
+        
+        if campaign_id:
+            filters["campaign_id"] = campaign_id
+        
+        if start_date and end_date:
+            filters["start_date"] = ["between", [start_date, end_date]]
+        
+        campaigns = frappe.get_all("Restaurant Marketing Campaign",
+            filters=filters,
+            fields=[
+                "campaign_id", "campaign_name", "campaign_type", "campaign_status",
+                "start_date", "end_date", "budget", "spent_amount",
+                "customers_reached", "customers_engaged", "orders_generated",
+                "revenue_generated", "response_rate", "conversion_rate", "roi_percentage"
+            ]
+        )
+        
+        # Calculate overall metrics
+        total_budget = sum(camp.get("budget", 0) for camp in campaigns)
+        total_spent = sum(camp.get("spent_amount", 0) for camp in campaigns)
+        total_revenue = sum(camp.get("revenue_generated", 0) for camp in campaigns)
+        total_customers_reached = sum(camp.get("customers_reached", 0) for camp in campaigns)
+        
+        # Calculate campaign performance
+        for campaign in campaigns:
+            campaign["performance_score"] = calculate_campaign_performance_score(campaign)
+            campaign["status_color"] = get_campaign_status_color(campaign["campaign_status"])
+        
+        # Sort by performance
+        campaigns.sort(key=lambda x: x.get("performance_score", 0), reverse=True)
+        
+        return {
+            "success": True,
+            "data": {
+                "campaigns": campaigns,
+                "summary": {
+                    "total_campaigns": len(campaigns),
+                    "total_budget": total_budget,
+                    "total_spent": total_spent,
+                    "total_revenue": total_revenue,
+                    "total_customers_reached": total_customers_reached,
+                    "overall_roi": round(((total_revenue - total_spent) / total_spent * 100) if total_spent > 0 else 0, 2)
+                }
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting campaign analytics: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_active_promotions(customer_id=None):
+    """Get active promotions for customer"""
+    try:
+        today = frappe.utils.getdate()
+        current_time = frappe.utils.nowtime()
+        
+        filters = {
+            "promotion_status": "Active",
+            "start_date": ["<=", today],
+            "end_date": [">=", today]
+        }
+        
+        promotions = frappe.get_all("Restaurant Promotion",
+            filters=filters,
+            fields=[
+                "promotion_id", "promotion_name", "promotion_type", "promotion_code",
+                "discount_type", "discount_value", "minimum_order_amount",
+                "promotion_description", "terms_conditions", "end_date",
+                "usage_limit_per_customer", "auto_apply"
+            ]
+        )
+        
+        # Filter by customer eligibility and usage limits
+        eligible_promotions = []
+        
+        for promo in promotions:
+            # Check customer eligibility
+            if customer_id and not is_customer_eligible_for_promotion(customer_id, promo):
+                continue
+            
+            # Check usage limits
+            if customer_id and promo.get("usage_limit_per_customer"):
+                usage_count = get_customer_promotion_usage(customer_id, promo["promotion_code"])
+                if usage_count >= promo["usage_limit_per_customer"]:
+                    continue
+            
+            # Add days remaining
+            end_date = frappe.utils.getdate(promo["end_date"])
+            promo["days_remaining"] = (end_date - today).days
+            
+            eligible_promotions.append(promo)
+        
+        # Sort by discount value (highest first)
+        eligible_promotions.sort(key=lambda x: x.get("discount_value", 0), reverse=True)
+        
+        return {
+            "success": True,
+            "data": {
+                "promotions": eligible_promotions,
+                "total_active_promotions": len(eligible_promotions)
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting active promotions: {str(e)}"
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_customer_communication_history(customer_id, limit=50):
+    """Get customer communication history"""
+    try:
+        communications = frappe.get_all("Restaurant Customer Communication",
+            filters={"customer_id": customer_id},
+            fields=[
+                "communication_id", "communication_type", "communication_status",
+                "channel", "subject", "sent_datetime", "delivery_status",
+                "opened_datetime", "clicked_datetime", "response_received"
+            ],
+            order_by="sent_datetime desc",
+            limit=limit
+        )
+        
+        # Calculate engagement metrics
+        total_sent = len(communications)
+        total_opened = len([c for c in communications if c.get("opened_datetime")])
+        total_clicked = len([c for c in communications if c.get("clicked_datetime")])
+        total_responded = len([c for c in communications if c.get("response_received")])
+        
+        engagement_metrics = {
+            "total_communications": total_sent,
+            "open_rate": round((total_opened / total_sent * 100) if total_sent > 0 else 0, 2),
+            "click_rate": round((total_clicked / total_sent * 100) if total_sent > 0 else 0, 2),
+            "response_rate": round((total_responded / total_sent * 100) if total_sent > 0 else 0, 2)
+        }
+        
+        return {
+            "success": True,
+            "data": {
+                "communications": communications,
+                "engagement_metrics": engagement_metrics
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting communication history: {str(e)}"
+        }
+
+# ============================================================================
+# MARKETING SYSTEM HELPER FUNCTIONS
+# ============================================================================
+
+def create_campaign_promotion(campaign, data):
+    """Create promotion linked to campaign"""
+    try:
+        promotion_id = f"PROMO-{campaign.campaign_id}-{frappe.utils.random_string(3).upper()}"
+        
+        promotion = frappe.get_doc({
+            "doctype": "Restaurant Promotion",
+            "promotion_id": promotion_id,
+            "promotion_name": f"{campaign.campaign_name} - Special Offer",
+            "promotion_type": "Percentage Discount" if data.get("discount_percentage") else "Fixed Amount Discount",
+            "promotion_code": generate_promotion_code(),
+            "promotion_status": "Draft",
+            "start_date": campaign.start_date,
+            "end_date": campaign.end_date,
+            "discount_type": "Percentage" if data.get("discount_percentage") else "Fixed Amount",
+            "discount_value": data.get("discount_percentage") or data.get("discount_amount"),
+            "minimum_order_amount": data.get("minimum_order_value"),
+            "auto_apply": 1 if campaign.target_audience == "All Customers" else 0,
+            "created_by": campaign.campaign_manager,
+            "promotion_description": campaign.promotional_offer
+        })
+        
+        promotion.insert()
+        return promotion.promotion_id
+        
+    except Exception as e:
+        frappe.log_error(f"Error creating campaign promotion: {str(e)}")
+        return None
+
+def generate_promotion_code():
+    """Generate unique promotion code"""
+    prefix = "SAVE"
+    suffix = frappe.utils.random_string(6).upper()
+    return f"{prefix}{suffix}"
+
+def get_campaign_target_customers(campaign):
+    """Get target customers for campaign"""
+    try:
+        filters = {}
+        
+        if campaign.target_audience == "VIP Customers":
+            filters["vip_status"] = 1
+        elif campaign.target_audience == "Loyal Customers":
+            filters["membership_tier"] = ["in", ["Gold", "Platinum", "VIP"]]
+        elif campaign.target_audience == "New Customers":
+            # Customers who joined in last 30 days
+            cutoff_date = frappe.utils.add_days(frappe.utils.nowdate(), -30)
+            filters["creation"] = [">=", cutoff_date]
+        elif campaign.target_audience == "Inactive Customers":
+            # Customers who haven't visited in 60 days
+            cutoff_date = frappe.utils.add_days(frappe.utils.nowdate(), -60)
+            filters["last_visit_date"] = ["<", cutoff_date]
+        elif campaign.target_audience == "Birthday Customers":
+            # Customers with birthday this month
+            current_month = frappe.utils.nowdate()[5:7]  # MM format
+            filters["date_of_birth"] = ["like", f"%-{current_month}-%"]
+        elif campaign.target_audience == "Anniversary Customers":
+            # Customers with anniversary this month
+            current_month = frappe.utils.nowdate()[5:7]
+            filters["first_visit_date"] = ["like", f"%-{current_month}-%"]
+        
+        customers = frappe.get_all("Restaurant Customer Profile",
+            filters=filters,
+            fields=["customer_id", "customer_name", "email", "phone", "membership_tier", "date_of_birth"]
+        )
+        
+        return customers
+        
+    except Exception as e:
+        frappe.log_error(f"Error getting target customers: {str(e)}")
+        return []
+
+def send_campaign_communication(campaign, customer, channel):
+    """Send communication to customer via specified channel"""
+    try:
+        communication_id = f"COMM-{campaign.campaign_id}-{frappe.utils.random_string(6).upper()}"
+        
+        # Get appropriate template based on channel
+        message_content = get_campaign_message_content(campaign, customer, channel)
+        
+        communication = frappe.get_doc({
+            "doctype": "Restaurant Customer Communication",
+            "communication_id": communication_id,
+            "communication_type": "Marketing",
+            "communication_status": "Sent",
+            "campaign_id": campaign.campaign_id,
+            "customer_id": customer.get("customer_id"),
+            "customer_name": customer.get("customer_name"),
+            "customer_email": customer.get("email"),
+            "customer_phone": customer.get("phone"),
+            "channel": channel,
+            "subject": f"{campaign.campaign_name} - Special Offer!",
+            "message_content": message_content,
+            "sent_datetime": frappe.utils.now(),
+            "delivery_status": "Delivered",  # Simulate delivery
+            "sent_by": campaign.campaign_manager
+        })
+        
+        communication.insert()
+        return True
+        
+    except Exception as e:
+        frappe.log_error(f"Error sending campaign communication: {str(e)}")
+        return False
+
+def get_campaign_message_content(campaign, customer, channel):
+    """Get personalized message content for campaign"""
+    try:
+        customer_name = customer.get("customer_name", "Valued Customer")
+        
+        if channel == "Email":
+            template = campaign.email_template or get_default_email_template()
+        elif channel == "SMS":
+            template = campaign.sms_template or get_default_sms_template()
+        else:
+            template = campaign.promotional_offer or "Special offer just for you!"
+        
+        # Personalize the message
+        personalized_message = template.replace("{customer_name}", customer_name)
+        personalized_message = personalized_message.replace("{campaign_name}", campaign.campaign_name)
+        personalized_message = personalized_message.replace("{offer_description}", campaign.promotional_offer or "")
+        
+        if campaign.discount_percentage:
+            personalized_message = personalized_message.replace("{discount}", f"{campaign.discount_percentage}%")
+        elif campaign.discount_amount:
+            personalized_message = personalized_message.replace("{discount}", f"${campaign.discount_amount}")
+        
+        return personalized_message
+        
+    except Exception as e:
+        return f"Special offer for {customer.get('customer_name', 'you')}!"
+
+def get_default_email_template():
+    """Get default email template"""
+    return """
+    Dear {customer_name},
+    
+    We have an exclusive offer just for you!
+    
+    {campaign_name}
+    {offer_description}
+    
+    Enjoy {discount} off your next visit!
+    
+    Valid until {end_date}. Terms and conditions apply.
+    
+    Best regards,
+    Your Restaurant Team
+    """
+
+def get_default_sms_template():
+    """Get default SMS template"""
+    return "Hi {customer_name}! Special offer: {discount} off your next visit. Use code at checkout. Valid until {end_date}. Terms apply."
+
+def calculate_promotion_discount(promotion, order_info):
+    """Calculate discount amount for promotion"""
+    try:
+        order_total = order_info.get("order_total", 0)
+        
+        if promotion["discount_type"] == "Percentage":
+            discount = order_total * (promotion["discount_value"] / 100)
+        else:  # Fixed Amount
+            discount = promotion["discount_value"]
+        
+        # Apply maximum discount limit
+        if promotion.get("maximum_discount_amount"):
+            discount = min(discount, promotion["maximum_discount_amount"])
+        
+        return round(discount, 2)
+        
+    except Exception as e:
+        frappe.log_error(f"Error calculating promotion discount: {str(e)}")
+        return 0
+
+def get_customer_promotion_usage(customer_id, promotion_code):
+    """Get customer's usage count for promotion"""
+    try:
+        usage_count = frappe.db.count("Restaurant Order",
+            filters={
+                "customer_id": customer_id,
+                "promotion_applied": promotion_code
+            }
+        )
+        return usage_count
+    except:
+        return 0
+
+def update_promotion_usage(promotion_id):
+    """Update promotion usage count"""
+    try:
+        promotion = frappe.get_doc("Restaurant Promotion", promotion_id)
+        promotion.current_usage_count = (promotion.current_usage_count or 0) + 1
+        promotion.save()
+    except Exception as e:
+        frappe.log_error(f"Error updating promotion usage: {str(e)}")
+
+def get_customers_by_criteria(criteria):
+    """Get customers based on targeting criteria"""
+    try:
+        filters = {}
+        
+        if criteria.get("membership_tier"):
+            filters["membership_tier"] = criteria["membership_tier"]
+        
+        if criteria.get("min_visits"):
+            filters["total_visits"] = [">=", criteria["min_visits"]]
+        
+        if criteria.get("min_spent"):
+            filters["total_spent"] = [">=", criteria["min_spent"]]
+        
+        if criteria.get("last_visit_days"):
+            cutoff_date = frappe.utils.add_days(frappe.utils.nowdate(), -criteria["last_visit_days"])
+            filters["last_visit_date"] = [">=", cutoff_date]
+        
+        customers = frappe.get_all("Restaurant Customer Profile",
+            filters=filters,
+            fields=["customer_id", "customer_name", "email", "phone"]
+        )
+        
+        return customers
+        
+    except Exception as e:
+        frappe.log_error(f"Error getting customers by criteria: {str(e)}")
+        return []
+
+def personalize_message(template, customer):
+    """Personalize message template with customer data"""
+    try:
+        personalized = template
+        
+        # Replace common placeholders
+        placeholders = {
+            "{customer_name}": customer.get("customer_name", "Valued Customer"),
+            "{first_name}": customer.get("customer_name", "").split()[0] if customer.get("customer_name") else "Friend",
+            "{membership_tier}": customer.get("membership_tier", "Member"),
+            "{total_visits}": str(customer.get("total_visits", 0)),
+            "{last_visit}": customer.get("last_visit_date", "recently")
+        }
+        
+        for placeholder, value in placeholders.items():
+            personalized = personalized.replace(placeholder, value)
+        
+        return personalized
+        
+    except Exception as e:
+        return template
+
+def calculate_campaign_performance_score(campaign):
+    """Calculate campaign performance score (0-100)"""
+    try:
+        score = 0
+        
+        # ROI contribution (40%)
+        roi = campaign.get("roi_percentage", 0)
+        if roi > 0:
+            score += min(roi / 2, 40)  # Cap at 40 points
+        
+        # Response rate contribution (30%)
+        response_rate = campaign.get("response_rate", 0)
+        score += min(response_rate * 0.3, 30)  # Cap at 30 points
+        
+        # Conversion rate contribution (20%)
+        conversion_rate = campaign.get("conversion_rate", 0)
+        score += min(conversion_rate * 0.2, 20)  # Cap at 20 points
+        
+        # Budget efficiency contribution (10%)
+        budget = campaign.get("budget", 1)
+        spent = campaign.get("spent_amount", 0)
+        if budget > 0:
+            efficiency = (1 - (spent / budget)) * 100
+            score += min(efficiency * 0.1, 10)  # Cap at 10 points
+        
+        return round(score, 1)
+        
+    except Exception as e:
+        return 0
+
+def get_campaign_status_color(status):
+    """Get color code for campaign status"""
+    status_colors = {
+        "Draft": "#808080",      # Gray
+        "Approved": "#007bff",   # Blue
+        "Active": "#28a745",     # Green
+        "Paused": "#ffc107",     # Yellow
+        "Completed": "#6c757d",  # Dark Gray
+        "Cancelled": "#dc3545"   # Red
+    }
+    return status_colors.get(status, "#808080")
+
+def is_customer_eligible_for_promotion(customer_id, promotion):
+    """Check if customer is eligible for promotion"""
+    try:
+        if not promotion.get("customer_eligibility"):
+            return True
+        
+        eligibility_rules = json.loads(promotion["customer_eligibility"])
+        customer = frappe.get_doc("Restaurant Customer Profile", customer_id)
+        
+        # Check membership tier requirement
+        if eligibility_rules.get("membership_tier"):
+            required_tiers = eligibility_rules["membership_tier"]
+            if customer.membership_tier not in required_tiers:
+                return False
+        
+        # Check minimum visits requirement
+        if eligibility_rules.get("min_visits"):
+            if customer.total_visits < eligibility_rules["min_visits"]:
+                return False
+        
+        # Check minimum spend requirement
+        if eligibility_rules.get("min_total_spent"):
+            if customer.total_spent < eligibility_rules["min_total_spent"]:
+                return False
+        
+        return True
+        
+    except Exception as e:
+        frappe.log_error(f"Error checking customer eligibility: {str(e)}")
+        return True  # Default to eligible if check fails
+
+# ============================================================================
+# AUTOMATED MARKETING TRIGGERS
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def trigger_automated_campaigns():
+    """Trigger automated marketing campaigns based on customer behavior"""
+    try:
+        triggered_campaigns = 0
+        
+        # Birthday campaigns
+        birthday_customers = get_birthday_customers_today()
+        if birthday_customers:
+            triggered_campaigns += trigger_birthday_campaign(birthday_customers)
+        
+        # Win-back campaigns for inactive customers
+        inactive_customers = get_inactive_customers()
+        if inactive_customers:
+            triggered_campaigns += trigger_winback_campaign(inactive_customers)
+        
+        # Loyalty boost for frequent customers
+        frequent_customers = get_frequent_customers_needing_boost()
+        if frequent_customers:
+            triggered_campaigns += trigger_loyalty_boost_campaign(frequent_customers)
+        
+        return {
+            "success": True,
+            "message": f"Triggered {triggered_campaigns} automated campaigns",
+            "data": {
+                "campaigns_triggered": triggered_campaigns
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error triggering automated campaigns: {str(e)}"
+        }
+
+def get_birthday_customers_today():
+    """Get customers with birthdays today"""
+    try:
+        today = frappe.utils.nowdate()
+        today_mm_dd = today[5:]  # Get MM-DD format
+        
+        customers = frappe.get_all("Restaurant Customer Profile",
+            filters={"date_of_birth": ["like", f"%-{today_mm_dd}"]},
+            fields=["customer_id", "customer_name", "email", "phone"]
+        )
+        
+        return customers
+    except:
+        return []
+
+def trigger_birthday_campaign(customers):
+    """Trigger birthday campaign for customers"""
+    try:
+        # Create birthday campaign
+        campaign_data = {
+            "campaign_name": f"Birthday Special - {frappe.utils.nowdate()}",
+            "campaign_type": "Birthday Special",
+            "target_audience": "Birthday Customers",
+            "start_date": frappe.utils.nowdate(),
+            "end_date": frappe.utils.add_days(frappe.utils.nowdate(), 7),
+            "promotional_offer": "Complimentary birthday dessert + 20% off entire meal",
+            "discount_percentage": 20,
+            "communication_channels": ["Email", "SMS"]
+        }
+        
+        create_marketing_campaign(campaign_data)
+        return 1
+        
+    except Exception as e:
+        frappe.log_error(f"Error triggering birthday campaign: {str(e)}")
+        return 0

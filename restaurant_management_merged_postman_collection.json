@@ -1759,6 +1759,407 @@
       ]
     },
     {
+      "name": "Kitchen Display System",
+      "item": [
+        {
+          "name": "Send Order to Kitchen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.send_to_kitchen?order_id=ORD-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.send_to_kitchen"],
+              "query": [
+                {
+                  "key": "order_id",
+                  "value": "ORD-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Kitchen Order Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kitchen_order_id\": \"KIT-20240120-AB7X\",\n  \"new_status\": \"In Preparation\",\n  \"chef_notes\": \"Started cooking, estimated 15 minutes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_kitchen_order_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_kitchen_order_status"]
+            }
+          }
+        },
+        {
+          "name": "Get Kitchen Display Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_kitchen_display_orders?station=Hot Station&status=In Preparation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_kitchen_display_orders"],
+              "query": [
+                {
+                  "key": "station",
+                  "value": "Hot Station"
+                },
+                {
+                  "key": "status",
+                  "value": "In Preparation"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory Management System",
+      "item": [
+        {
+          "name": "Add Inventory Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_data\": {\n    \"item_name\": \"Fresh Lettuce\",\n    \"category\": \"Vegetables\",\n    \"unit_of_measure\": \"Kg\",\n    \"current_stock\": 25.0,\n    \"minimum_stock_level\": 5.0,\n    \"maximum_stock_level\": 50.0,\n    \"reorder_point\": 10.0,\n    \"reorder_quantity\": 30.0,\n    \"cost_per_unit\": 3.50,\n    \"supplier_name\": \"Green Valley Farms\",\n    \"supplier_contact\": \"+1-555-FARM\",\n    \"storage_location\": \"Refrigerator\",\n    \"consumption_rate\": 2.5,\n    \"lead_time_days\": 2,\n    \"perishable\": 1,\n    \"storage_requirements\": \"Keep refrigerated at 2-4°C\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_inventory_item",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.add_inventory_item"]
+            }
+          }
+        },
+        {
+          "name": "Update Inventory Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_code\": \"FRE-AB7X\",\n  \"transaction_data\": {\n    \"transaction_type\": \"Stock In\",\n    \"quantity\": 20.0,\n    \"unit_cost\": 3.50,\n    \"total_cost\": 70.00,\n    \"supplier_name\": \"Green Valley Farms\",\n    \"batch_number\": \"GVF-2024-001\",\n    \"expiry_date\": \"2024-01-27\",\n    \"performed_by\": \"STAFF-2024-0001\",\n    \"notes\": \"Fresh delivery received\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_inventory_stock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_inventory_stock"]
+            }
+          }
+        },
+        {
+          "name": "Get Inventory Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_inventory_status?category=Vegetables&low_stock_only=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_inventory_status"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Vegetables"
+                },
+                {
+                  "key": "low_stock_only",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Auto Reorder Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_reorder_inventory",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.auto_reorder_inventory"]
+            }
+          }
+        },
+        {
+          "name": "Get Inventory Valuation Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_inventory_valuation_report",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_inventory_valuation_report"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comprehensive Reporting",
+      "item": [
+        {
+          "name": "Get Daily Operations Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_daily_operations_report?date=2024-01-20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_daily_operations_report"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-01-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Weekly Performance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_weekly_performance_report?start_date=2024-01-14",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_weekly_performance_report"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2024-01-14"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Marketing Campaign Management",
+      "item": [
+        {
+          "name": "Create Marketing Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaign_data\": {\n    \"campaign_name\": \"Summer Special 2024\",\n    \"campaign_type\": \"Seasonal\",\n    \"target_audience\": \"All Customers\",\n    \"start_date\": \"2024-06-01\",\n    \"end_date\": \"2024-08-31\",\n    \"budget\": 5000,\n    \"campaign_description\": \"Special summer menu with refreshing drinks and light meals\",\n    \"promotional_offer\": \"25% off all summer drinks and appetizers\",\n    \"discount_percentage\": 25,\n    \"minimum_order_value\": 30,\n    \"communication_channels\": [\"Email\", \"SMS\", \"Social Media\"],\n    \"email_template\": \"Beat the heat with our Summer Special! Enjoy {discount} off refreshing drinks and appetizers.\",\n    \"sms_template\": \"Summer Special: {discount} off drinks & appetizers! Valid until Aug 31. Show this SMS.\",\n    \"target_metrics\": {\n      \"target_customers_reached\": 1000,\n      \"target_response_rate\": 15,\n      \"target_conversion_rate\": 8,\n      \"target_revenue\": 15000\n    },\n    \"campaign_manager\": \"STAFF-2024-0001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_marketing_campaign",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_marketing_campaign"]
+            }
+          }
+        },
+        {
+          "name": "Launch Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaign_id\": \"CAMP-20240120-AB7X\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.launch_campaign",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.launch_campaign"]
+            }
+          }
+        },
+        {
+          "name": "Create Promotion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"promotion_data\": {\n    \"promotion_name\": \"Happy Hour Special\",\n    \"promotion_type\": \"Happy Hour\",\n    \"start_date\": \"2024-01-21\",\n    \"end_date\": \"2024-12-31\",\n    \"start_time\": \"15:00\",\n    \"end_time\": \"18:00\",\n    \"applicable_days\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"],\n    \"discount_type\": \"Percentage\",\n    \"discount_value\": 30,\n    \"minimum_order_amount\": 25,\n    \"maximum_discount_amount\": 50,\n    \"usage_limit_per_customer\": 5,\n    \"applicable_items\": [\"Beverages\", \"Appetizers\"],\n    \"terms_conditions\": \"Valid during happy hour times only. Cannot be combined with other offers.\",\n    \"promotion_description\": \"30% off drinks and appetizers during happy hour!\",\n    \"auto_apply\": true,\n    \"created_by\": \"STAFF-2024-0001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_promotion",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.create_promotion"]
+            }
+          }
+        },
+        {
+          "name": "Validate Promotion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"promotion_code\": \"SAVE123ABC\",\n  \"order_data\": {\n    \"order_total\": 75.50,\n    \"customer_id\": \"CUST-2024-0001\",\n    \"order_items\": [\n      {\"item_id\": \"Caesar Salad\", \"quantity\": 2},\n      {\"item_id\": \"Grilled Chicken\", \"quantity\": 1}\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.validate_promotion",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.validate_promotion"]
+            }
+          }
+        },
+        {
+          "name": "Apply Promotion to Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-2024-0001\",\n  \"promotion_code\": \"SAVE123ABC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.apply_promotion",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.apply_promotion"]
+            }
+          }
+        },
+        {
+          "name": "Send Targeted Communication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"communication_data\": {\n    \"communication_type\": \"Promotional\",\n    \"channel\": \"Email\",\n    \"subject\": \"Exclusive VIP Offer Just for You!\",\n    \"message_content\": \"Dear {customer_name}, as our valued {membership_tier} member, enjoy 20% off your next visit! Valid until month end.\",\n    \"target_criteria\": {\n      \"membership_tier\": [\"Gold\", \"Platinum\", \"VIP\"],\n      \"min_visits\": 5,\n      \"last_visit_days\": 30\n    },\n    \"campaign_id\": \"CAMP-20240120-AB7X\",\n    \"template_used\": \"VIP_Exclusive_Offer\",\n    \"sent_by\": \"STAFF-2024-0001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.send_targeted_communication",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.send_targeted_communication"]
+            }
+          }
+        },
+        {
+          "name": "Get Campaign Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_campaign_analytics?campaign_id=CAMP-20240120-AB7X",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_campaign_analytics"],
+              "query": [
+                {
+                  "key": "campaign_id",
+                  "value": "CAMP-20240120-AB7X"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Active Promotions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_active_promotions?customer_id=CUST-2024-0001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_active_promotions"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Customer Communication History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_communication_history?customer_id=CUST-2024-0001&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_customer_communication_history"],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "CUST-2024-0001"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Trigger Automated Campaigns",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.trigger_automated_campaigns",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.trigger_automated_campaigns"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Utility APIs",
       "item": [
         {

@@ -1,0 +1,225 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2024-01-20 16:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "promotion_id",
+    "promotion_name",
+    "promotion_type",
+    "promotion_code",
+    "promotion_status",
+    "start_date",
+    "end_date",
+    "start_time",
+    "end_time",
+    "applicable_days",
+    "discount_type",
+    "discount_value",
+    "minimum_order_amount",
+    "maximum_discount_amount",
+    "usage_limit_per_customer",
+    "total_usage_limit",
+    "current_usage_count",
+    "applicable_items",
+    "excluded_items",
+    "customer_eligibility",
+    "terms_conditions",
+    "promotion_description",
+    "auto_apply",
+    "stackable_with_other_offers",
+    "created_by",
+    "approved_by",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "promotion_id",
+      "fieldtype": "Data",
+      "label": "Promotion ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "promotion_name",
+      "fieldtype": "Data",
+      "label": "Promotion Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "promotion_type",
+      "fieldtype": "Select",
+      "label": "Promotion Type",
+      "options": "Percentage Discount\nFixed Amount Discount\nBuy One Get One\nHappy Hour\nCombo Deal\nFree Item\nFree Delivery\nLoyalty Points Multiplier\nCashback",
+      "reqd": 1
+    },
+    {
+      "fieldname": "promotion_code",
+      "fieldtype": "Data",
+      "label": "Promotion Code"
+    },
+    {
+      "fieldname": "promotion_status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nActive\nPaused\nExpired\nCancelled",
+      "default": "Draft"
+    },
+    {
+      "fieldname": "start_date",
+      "fieldtype": "Date",
+      "label": "Start Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "end_date",
+      "fieldtype": "Date",
+      "label": "End Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "start_time",
+      "fieldtype": "Time",
+      "label": "Start Time"
+    },
+    {
+      "fieldname": "end_time",
+      "fieldtype": "Time",
+      "label": "End Time"
+    },
+    {
+      "fieldname": "applicable_days",
+      "fieldtype": "Text",
+      "label": "Applicable Days (JSON)"
+    },
+    {
+      "fieldname": "discount_type",
+      "fieldtype": "Select",
+      "label": "Discount Type",
+      "options": "Percentage\nFixed Amount\nFree Item\nPoints Multiplier",
+      "reqd": 1
+    },
+    {
+      "fieldname": "discount_value",
+      "fieldtype": "Float",
+      "label": "Discount Value",
+      "reqd": 1
+    },
+    {
+      "fieldname": "minimum_order_amount",
+      "fieldtype": "Currency",
+      "label": "Minimum Order Amount"
+    },
+    {
+      "fieldname": "maximum_discount_amount",
+      "fieldtype": "Currency",
+      "label": "Maximum Discount Amount"
+    },
+    {
+      "fieldname": "usage_limit_per_customer",
+      "fieldtype": "Int",
+      "label": "Usage Limit Per Customer"
+    },
+    {
+      "fieldname": "total_usage_limit",
+      "fieldtype": "Int",
+      "label": "Total Usage Limit"
+    },
+    {
+      "fieldname": "current_usage_count",
+      "fieldtype": "Int",
+      "label": "Current Usage Count",
+      "default": 0
+    },
+    {
+      "fieldname": "applicable_items",
+      "fieldtype": "Text",
+      "label": "Applicable Items (JSON)"
+    },
+    {
+      "fieldname": "excluded_items",
+      "fieldtype": "Text",
+      "label": "Excluded Items (JSON)"
+    },
+    {
+      "fieldname": "customer_eligibility",
+      "fieldtype": "Text",
+      "label": "Customer Eligibility Rules (JSON)"
+    },
+    {
+      "fieldname": "terms_conditions",
+      "fieldtype": "Text",
+      "label": "Terms & Conditions"
+    },
+    {
+      "fieldname": "promotion_description",
+      "fieldtype": "Text",
+      "label": "Promotion Description"
+    },
+    {
+      "fieldname": "auto_apply",
+      "fieldtype": "Check",
+      "label": "Auto Apply",
+      "default": 0
+    },
+    {
+      "fieldname": "stackable_with_other_offers",
+      "fieldtype": "Check",
+      "label": "Stackable with Other Offers",
+      "default": 0
+    },
+    {
+      "fieldname": "created_by",
+      "fieldtype": "Data",
+      "label": "Created By"
+    },
+    {
+      "fieldname": "approved_by",
+      "fieldtype": "Data",
+      "label": "Approved By"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "modified": "2024-01-20 16:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Restaurant Management",
+  "name": "Restaurant Promotion",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "All",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "promotion_name"
+}
