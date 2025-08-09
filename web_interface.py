@@ -605,5 +605,161 @@ def admin_bulk_operations():
     # This would be expanded for bulk user operations
     return jsonify({'success': True, 'message': 'Bulk operations endpoint'})
 
+# ===============================================
+# RESTAURANT INTEGRATION ROUTES
+# ===============================================
+
+@app.route('/integration')
+def integration_dashboard():
+    """Restaurant integration dashboard"""
+    try:
+        from restaurant_integration import get_integration_dashboard
+        
+        # Get integration status
+        integration_status = get_integration_dashboard()
+        
+        return render_template('integration.html',
+                             integration_status=integration_status,
+                             page_title="Restaurant Integration")
+    except Exception as e:
+        flash(f'Error loading integration dashboard: {str(e)}', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/integration/sync_staff', methods=['POST'])
+def sync_staff():
+    """Sync staff from restaurant system"""
+    try:
+        from restaurant_integration import quick_sync_staff
+        
+        result = quick_sync_staff()
+        
+        if result['success']:
+            flash(f"Successfully synced {result['synced_count']} staff members", 'success')
+        else:
+            flash(f"Sync failed: {result.get('error', 'Unknown error')}", 'error')
+            
+        return redirect(url_for('integration_dashboard'))
+        
+    except Exception as e:
+        flash(f'Error syncing staff: {str(e)}', 'error')
+        return redirect(url_for('integration_dashboard'))
+
+@app.route('/integration/process_attendance', methods=['POST'])
+def process_attendance():
+    """Process and sync today's attendance"""
+    try:
+        from restaurant_integration import quick_process_attendance
+        from datetime import date
+        
+        target_date = request.form.get('date')
+        if target_date:
+            target_date = date.fromisoformat(target_date)
+        else:
+            target_date = date.today()
+        
+        result = quick_process_attendance(target_date)
+        
+        if result['success']:
+            process_count = result['process_result']['processed_count']
+            sync_count = result['sync_result']['synced_count']
+            flash(f"Processed {process_count} attendance records, synced {sync_count} to restaurant system", 'success')
+        else:
+            flash(f"Processing failed: {result.get('error', 'Unknown error')}", 'error')
+            
+        return redirect(url_for('integration_dashboard'))
+        
+    except Exception as e:
+        flash(f'Error processing attendance: {str(e)}', 'error')
+        return redirect(url_for('integration_dashboard'))
+
+@app.route('/integration/status_api')
+def integration_status_api():
+    """Get integration status via API"""
+    try:
+        from restaurant_integration import get_integration_dashboard
+        
+        status = get_integration_dashboard()
+        return jsonify(status)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/integration/staff_summary')
+def staff_work_summary():
+    """Get staff work summary"""
+    try:
+        from restaurant_integration import RestaurantFaceIntegration
+        from datetime import date, timedelta
+        
+        # Get date range from query parameters
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        if start_date:
+            start_date = date.fromisoformat(start_date)
+        else:
+            start_date = date.today() - timedelta(days=7)
+            
+        if end_date:
+            end_date = date.fromisoformat(end_date)
+        else:
+            end_date = date.today()
+        
+        integration = RestaurantFaceIntegration()
+        try:
+            summary = integration.get_staff_work_summary(
+                start_date=start_date,
+                end_date=end_date
+            )
+            return jsonify(summary)
+        finally:
+            integration.close()
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/integration/test_connection', methods=['POST'])
+def test_restaurant_connection():
+    """Test connection to restaurant system"""
+    try:
+        try:
+            import requests
+            REQUESTS_AVAILABLE = True
+        except ImportError:
+            return jsonify({
+                'success': False,
+                'message': 'requests module not installed - please run: pip install requests',
+                'status': 'error'
+            })
+        
+        # Test connection to Frappe restaurant system
+        response = requests.get('http://site1.local:8000/api/method/restaurant_management.api.get_positions', timeout=5)
+        
+        if response.status_code == 200:
+            return jsonify({
+                'success': True,
+                'message': 'Restaurant system connection successful',
+                'status': 'online'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': f'Restaurant system returned status {response.status_code}',
+                'status': 'error'
+            })
+            
+    except requests.exceptions.ConnectionError:
+        return jsonify({
+            'success': False,
+            'message': 'Cannot connect to restaurant system',
+            'status': 'offline'
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Connection test failed: {str(e)}',
+            'status': 'error'
+        })
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 

@@ -1,0 +1,599 @@
+{% extends "base.html" %}
+
+{% block title %}Restaurant Integration - Face Recognition System{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --border-color: #e2e8f0;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --radius-md: 8px;
+        --radius-lg: 12px;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .integration-container {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        margin: 20px;
+        overflow: hidden;
+    }
+
+    .integration-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #3730a3 100%);
+        color: white;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .integration-header::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .integration-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .integration-subtitle {
+        opacity: 0.9;
+        margin: 8px 0 0 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin: 30px;
+    }
+
+    .status-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .status-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .status-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .status-card.success::before { background: var(--success-color); }
+    .status-card.warning::before { background: var(--warning-color); }
+    .status-card.danger::before { background: var(--danger-color); }
+    .status-card.info::before { background: var(--info-color); }
+
+    .status-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        font-size: 20px;
+    }
+
+    .status-card.success .status-card-icon { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+    .status-card.warning .status-card-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .status-card.danger .status-card-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+    .status-card.info .status-card-icon { background: rgba(59, 130, 246, 0.1); color: var(--info-color); }
+
+    .status-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .status-card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .status-card.success .status-card-value { color: var(--success-color); }
+    .status-card.warning .status-card-value { color: var(--warning-color); }
+    .status-card.danger .status-card-value { color: var(--danger-color); }
+    .status-card.info .status-card-value { color: var(--info-color); }
+
+    .status-card-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .actions-section {
+        margin: 30px;
+    }
+
+    .action-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .btn {
+        font-weight: 500;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        border: none;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+        background: #3730a3;
+        box-shadow: var(--shadow-md);
+        color: white;
+    }
+
+    .btn-success {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+        color: white;
+    }
+
+    .btn-warning {
+        background: var(--warning-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+        color: white;
+    }
+
+    .btn-info {
+        background: var(--info-color);
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .sync-log {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-top: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
+    }
+
+    .sync-log-item {
+        padding: 4px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .sync-log-item:last-child {
+        border-bottom: none;
+    }
+
+    .staff-summary-table {
+        background: white;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        margin-top: 20px;
+    }
+
+    .staff-summary-table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--text-primary);
+        border: none;
+        padding: 16px;
+    }
+
+    .staff-summary-table td {
+        padding: 16px;
+        border: none;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .connection-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .connection-indicator.online {
+        background: rgba(16, 185, 129, 0.1);
+        color: #065f46;
+    }
+
+    .connection-indicator.offline {
+        background: rgba(239, 68, 68, 0.1);
+        color: #991b1b;
+    }
+
+    .pulse {
+        width: 8px;
+        height: 8px;
+        background: currentColor;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="integration-container">
+    <!-- Header -->
+    <div class="integration-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="integration-title">
+                    <i class="fas fa-handshake me-3"></i>Restaurant Integration
+                </h1>
+                <p class="integration-subtitle">Connect Face Recognition with Restaurant Management System</p>
+            </div>
+            <div id="connection-status">
+                <div class="connection-indicator offline">
+                    <div class="pulse"></div>
+                    Checking...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Overview -->
+    <div class="status-grid">
+        <div class="status-card success">
+            <div class="status-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="status-card-title">Mapped Staff</div>
+            <div class="status-card-value" id="mapped-staff-count">
+                {{ integration_status.status.mapped_staff_count if integration_status.success else 0 }}
+            </div>
+            <p class="status-card-label">Staff members synced</p>
+        </div>
+
+        <div class="status-card warning">
+            <div class="status-card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="status-card-title">Pending Sync</div>
+            <div class="status-card-value" id="pending-count">
+                {{ integration_status.status.pending_attendance_count if integration_status.success else 0 }}
+            </div>
+            <p class="status-card-label">Attendance records</p>
+        </div>
+
+        <div class="status-card info" id="frappe-status-card">
+            <div class="status-card-icon">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="status-card-title">Frappe System</div>
+            <div class="status-card-value" id="frappe-status">
+                {{ integration_status.status.frappe_system_status if integration_status.success else 'Unknown' }}
+            </div>
+            <p class="status-card-label">System status</p>
+        </div>
+
+        <div class="status-card danger">
+            <div class="status-card-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="status-card-title">Local Database</div>
+            <div class="status-card-value">
+                {{ integration_status.status.sqlite_status if integration_status.success else 'Unknown' }}
+            </div>
+            <p class="status-card-label">SQLite status</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+        <div class="action-card">
+            <h3 class="action-card-title">
+                <i class="fas fa-sync-alt" style="color: var(--primary-color);"></i>
+                Staff Synchronization
+            </h3>
+            <p class="text-muted">Link restaurant staff with face recognition users for basic check-in/check-out tracking.</p>
+            
+            <div class="action-buttons">
+                <form method="POST" action="{{ url_for('sync_staff') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download me-2"></i>Sync Staff from Restaurant
+                    </button>
+                </form>
+                <button class="btn btn-info" onclick="testConnection()">
+                    <i class="fas fa-wifi me-2"></i>Test Connection
+                </button>
+            </div>
+        </div>
+
+        <div class="action-card">
+            <h3 class="action-card-title">
+                <i class="fas fa-calendar-check" style="color: var(--success-color);"></i>
+                Basic Attendance Sync
+            </h3>
+            <p class="text-muted">Send basic check-in/check-out times to restaurant system for further processing.</p>
+            
+            <div class="action-buttons">
+                <form method="POST" action="{{ url_for('process_attendance') }}" style="display: inline;">
+                    <input type="hidden" name="date" value="{{ date.today().isoformat() if date else '' }}">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-play me-2"></i>Process Today's Attendance
+                    </button>
+                </form>
+                <button class="btn btn-warning" onclick="showDatePicker()">
+                    <i class="fas fa-calendar me-2"></i>Process Specific Date
+                </button>
+            </div>
+
+            <!-- Date picker modal will be inserted here -->
+            <div id="date-picker-container"></div>
+        </div>
+
+        <div class="action-card">
+            <h3 class="action-card-title">
+                <i class="fas fa-chart-line" style="color: var(--info-color);"></i>
+                Basic Attendance Summary
+            </h3>
+            <p class="text-muted">View basic attendance tracking data (detailed analytics handled by restaurant system).</p>
+            
+            <div class="action-buttons">
+                <button class="btn btn-info" onclick="loadStaffSummary()">
+                    <i class="fas fa-chart-bar me-2"></i>View Work Summary
+                </button>
+                <button class="btn btn-success" onclick="exportSummary()">
+                    <i class="fas fa-file-excel me-2"></i>Export to Excel
+                </button>
+            </div>
+
+            <div id="staff-summary-container"></div>
+        </div>
+    </div>
+
+    <!-- Recent Operations Log -->
+    {% if integration_status.success and integration_status.recent_operations %}
+    <div class="actions-section">
+        <div class="action-card">
+            <h3 class="action-card-title">
+                <i class="fas fa-history" style="color: var(--warning-color);"></i>
+                Recent Operations
+            </h3>
+            <div class="sync-log">
+                {% for operation in integration_status.recent_operations %}
+                <div class="sync-log-item">
+                    <strong>{{ operation.created_at }}</strong> - 
+                    {{ operation.operation_type }} - 
+                    <span class="badge bg-{{ 'success' if operation.status == 'success' else 'warning' }}">
+                        {{ operation.status }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Auto-refresh status every 30 seconds
+setInterval(refreshStatus, 30000);
+
+// Test connection on page load
+document.addEventListener('DOMContentLoaded', function() {
+    testConnection();
+    refreshStatus();
+});
+
+function testConnection() {
+    const statusIndicator = document.getElementById('connection-status');
+    statusIndicator.innerHTML = '<div class="connection-indicator offline"><div class="pulse"></div>Testing...</div>';
+    
+    fetch('/integration/test_connection', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            const statusClass = data.success ? 'online' : 'offline';
+            const statusText = data.success ? 'Connected' : 'Offline';
+            statusIndicator.innerHTML = `<div class="connection-indicator ${statusClass}"><div class="pulse"></div>${statusText}</div>`;
+            
+            // Update Frappe status card
+            const frappeCard = document.getElementById('frappe-status-card');
+            const frappeStatus = document.getElementById('frappe-status');
+            frappeStatus.textContent = data.status;
+            
+            if (data.success) {
+                frappeCard.className = 'status-card success';
+            } else {
+                frappeCard.className = 'status-card danger';
+            }
+        })
+        .catch(error => {
+            statusIndicator.innerHTML = '<div class="connection-indicator offline"><div class="pulse"></div>Error</div>';
+        });
+}
+
+function refreshStatus() {
+    fetch('/integration/status_api')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('mapped-staff-count').textContent = data.status.mapped_staff_count;
+                document.getElementById('pending-count').textContent = data.status.pending_attendance_count;
+            }
+        })
+        .catch(error => console.error('Error refreshing status:', error));
+}
+
+function showDatePicker() {
+    const today = new Date().toISOString().split('T')[0];
+    const datePickerHTML = `
+        <div class="mt-3 p-3 border rounded">
+            <h6>Select Date to Process</h6>
+            <form method="POST" action="{{ url_for('process_attendance') }}" class="d-flex gap-2 align-items-end">
+                <div class="flex-grow-1">
+                    <label for="process-date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="process-date" name="date" value="${today}" max="${today}">
+                </div>
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-play me-2"></i>Process
+                </button>
+            </form>
+        </div>
+    `;
+    document.getElementById('date-picker-container').innerHTML = datePickerHTML;
+}
+
+function loadStaffSummary() {
+    const container = document.getElementById('staff-summary-container');
+    container.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+    
+    fetch('/integration/staff_summary')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let tableHTML = `
+                    <table class="table staff-summary-table">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Staff Name</th>
+                                <th>Days Worked</th>
+                                <th>Total Hours</th>
+                                <th>Present/Total</th>
+                                <th>Attendance Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                data.summary.forEach(staff => {
+                    tableHTML += `
+                        <tr>
+                            <td><strong>${staff.employee_id || 'N/A'}</strong></td>
+                            <td>${staff.staff_name}</td>
+                            <td>${staff.days_worked}</td>
+                            <td>${staff.total_hours}h</td>
+                            <td>${staff.present_days}/${staff.days_worked}</td>
+                            <td>
+                                <span class="badge bg-${staff.attendance_rate >= 90 ? 'success' : staff.attendance_rate >= 70 ? 'warning' : 'danger'}">
+                                    ${staff.attendance_rate}%
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += '</tbody></table>';
+                container.innerHTML = tableHTML;
+            } else {
+                container.innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+            }
+        })
+        .catch(error => {
+            container.innerHTML = '<div class="alert alert-danger">Failed to load staff summary</div>';
+        });
+}
+
+function exportSummary() {
+    // This would trigger a download of the staff summary
+    window.open('/integration/staff_summary?format=excel', '_blank');
+}
+</script>
+{% endblock %}

@@ -5458,3 +5458,331 @@ def trigger_birthday_campaign(customers):
     except Exception as e:
         frappe.log_error(f"Error triggering birthday campaign: {str(e)}")
         return 0
+
+# ===============================================
+# FACE RECOGNITION INTEGRATION ENDPOINTS
+# ===============================================
+
+@frappe.whitelist(allow_guest=True)
+def get_restaurant_staff():
+    """Get all restaurant staff for face recognition integration"""
+    try:
+        staff_list = frappe.get_all("Restaurant Staff", 
+            fields=[
+                "name", "full_name", "employee_id", "position", 
+                "department", "phone", "email", "employment_status",
+                "date_of_joining", "hourly_rate", "salary"
+            ],
+            filters={"employment_status": "Active"},
+            order_by="employee_id"
+        )
+        
+        # Add additional calculated fields
+        for staff in staff_list:
+            # Calculate hourly rate if only salary is provided
+            if not staff.get("hourly_rate") and staff.get("salary"):
+                # Assume 40 hours/week, 52 weeks/year
+                staff["hourly_rate"] = float(staff["salary"]) / (40 * 52)
+            
+            # Set default department if not specified
+            if not staff.get("department"):
+                staff["department"] = "General"
+        
+        return {
+            "success": True,
+            "data": staff_list,
+            "total_count": len(staff_list)
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error fetching restaurant staff: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def record_staff_attendance(staff_id=None, employee_id=None, attendance_date=None, 
+                           check_in_time=None, check_out_time=None, total_hours=None,
+                           status="Present", source="face_recognition"):
+    """Record staff attendance from face recognition system"""
+    try:
+        if not staff_id and not employee_id:
+            return {"success": False, "error": "Staff ID or Employee ID is required"}
+        
+        if not attendance_date:
+            return {"success": False, "error": "Attendance date is required"}
+        
+        # Get staff record
+        staff_doc = None
+        if staff_id:
+            staff_doc = frappe.get_doc("Restaurant Staff", staff_id)
+        elif employee_id:
+            staff_list = frappe.get_all("Restaurant Staff", 
+                filters={"employee_id": employee_id},
+                limit=1
+            )
+            if staff_list:
+                staff_doc = frappe.get_doc("Restaurant Staff", staff_list[0].name)
+        
+        if not staff_doc:
+            return {"success": False, "error": "Staff member not found"}
+        
+        # Check if attendance already exists for this date
+        existing_attendance = frappe.get_all("Restaurant Attendance",
+            filters={
+                "staff": staff_doc.name,
+                "attendance_date": attendance_date
+            },
+            limit=1
+        )
+        
+        # Basic attendance data - restaurant system will handle all business logic
+        attendance_data = {
+            "doctype": "Restaurant Attendance",
+            "staff": staff_doc.name,
+            "employee_id": staff_doc.employee_id,
+            "staff_name": staff_doc.full_name,
+            "attendance_date": attendance_date,
+            "status": status,
+            "check_in_time": check_in_time,
+            "check_out_time": check_out_time,
+            "total_work_hours": float(total_hours) if total_hours else 0.0,
+            "attendance_source": source,
+            "notes": f"Basic check-in/out from {source} system - processed by restaurant management"
+        }
+        
+        if existing_attendance:
+            # Update existing attendance
+            attendance_doc = frappe.get_doc("Restaurant Attendance", existing_attendance[0].name)
+            for key, value in attendance_data.items():
+                if key != "doctype":
+                    setattr(attendance_doc, key, value)
+            attendance_doc.save()
+            attendance_id = attendance_doc.name
+        else:
+            # Create new attendance record
+            attendance_doc = frappe.get_doc(attendance_data)
+            attendance_doc.insert()
+            attendance_id = attendance_doc.name
+        
+        # Note: Payroll, overtime, shifts, etc. are handled by restaurant management system
+        # This just records the basic attendance data
+        
+        return {
+            "success": True,
+            "attendance_id": attendance_id,
+            "message": f"Attendance recorded for {staff_doc.full_name}",
+            "staff_name": staff_doc.full_name,
+            "total_hours": float(total_hours) if total_hours else 0.0
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error recording staff attendance: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_staff_attendance_summary(staff_id=None, start_date=None, end_date=None):
+    """Get attendance summary for staff members"""
+    try:
+        from datetime import datetime, timedelta
+        
+        if not start_date:
+            start_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+        if not end_date:
+            end_date = datetime.now().strftime("%Y-%m-%d")
+        
+        filters = {
+            "attendance_date": ["between", [start_date, end_date]]
+        }
+        
+        if staff_id:
+            filters["staff"] = staff_id
+        
+        attendance_records = frappe.get_all("Restaurant Attendance",
+            fields=[
+                "name", "staff", "staff_name", "employee_id", "attendance_date",
+                "status", "check_in_time", "check_out_time", "total_work_hours",
+                "overtime_hours", "late_entry_minutes", "early_exit_minutes",
+                "attendance_source"
+            ],
+            filters=filters,
+            order_by="attendance_date desc, staff_name"
+        )
+        
+        # Calculate summary statistics
+        summary_stats = {}
+        for record in attendance_records:
+            staff_key = record["staff"]
+            if staff_key not in summary_stats:
+                summary_stats[staff_key] = {
+                    "staff_name": record["staff_name"],
+                    "employee_id": record["employee_id"],
+                    "total_days": 0,
+                    "present_days": 0,
+                    "absent_days": 0,
+                    "total_hours": 0.0,
+                    "total_overtime": 0.0,
+                    "total_late_minutes": 0,
+                    "average_hours_per_day": 0.0
+                }
+            
+            stats = summary_stats[staff_key]
+            stats["total_days"] += 1
+            
+            if record["status"] == "Present":
+                stats["present_days"] += 1
+                stats["total_hours"] += record["total_work_hours"] or 0.0
+                stats["total_overtime"] += record["overtime_hours"] or 0.0
+                stats["total_late_minutes"] += record["late_entry_minutes"] or 0
+            else:
+                stats["absent_days"] += 1
+        
+        # Calculate averages
+        for staff_key, stats in summary_stats.items():
+            if stats["present_days"] > 0:
+                stats["average_hours_per_day"] = round(stats["total_hours"] / stats["present_days"], 2)
+            stats["total_hours"] = round(stats["total_hours"], 2)
+            stats["total_overtime"] = round(stats["total_overtime"], 2)
+        
+        return {
+            "success": True,
+            "attendance_records": attendance_records,
+            "summary_statistics": list(summary_stats.values()),
+            "period": {
+                "start_date": start_date,
+                "end_date": end_date
+            },
+            "total_records": len(attendance_records)
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error getting attendance summary: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def sync_face_recognition_data():
+    """Endpoint to trigger synchronization with face recognition system"""
+    try:
+        from datetime import date
+        
+        # This would be called by the face recognition system
+        # Return current staff data for synchronization
+        staff_data = get_restaurant_staff()
+        
+        if not staff_data.get("success"):
+            return staff_data
+        
+        # Also return any pending attendance corrections or updates
+        pending_updates = frappe.get_all("Restaurant Attendance",
+            fields=["name", "staff", "attendance_date", "status", "notes"],
+            filters={
+                "attendance_source": ["!=", "face_recognition"],
+                "attendance_date": [">=", date.today().strftime("%Y-%m-%d")]
+            },
+            order_by="modified desc",
+            limit=50
+        )
+        
+        return {
+            "success": True,
+            "staff_data": staff_data["data"],
+            "pending_updates": pending_updates,
+            "sync_timestamp": frappe.utils.now(),
+            "message": "Synchronization data prepared"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error preparing sync data: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+def _update_staff_payroll_data(staff_id, attendance_date, total_hours, overtime_hours):
+    """Update payroll-related data based on attendance"""
+    try:
+        # Get staff record
+        staff_doc = frappe.get_doc("Restaurant Staff", staff_id)
+        hourly_rate = staff_doc.hourly_rate or 0.0
+        
+        if hourly_rate > 0:
+            # Calculate earnings
+            regular_earnings = total_hours * hourly_rate
+            overtime_earnings = overtime_hours * hourly_rate * 1.5  # 1.5x for overtime
+            
+            # You could create or update payroll records here
+            # For now, we'll just log the calculation
+            frappe.logger().info(f"Payroll calculation for {staff_doc.full_name}: "
+                               f"Regular: ${regular_earnings:.2f}, Overtime: ${overtime_earnings:.2f}")
+    
+    except Exception as e:
+        frappe.log_error(f"Error updating payroll data: {str(e)}")
+
+@frappe.whitelist(allow_guest=True)
+def get_staff_shift_schedule(staff_id=None, schedule_date=None):
+    """Get staff shift schedules for face recognition system integration"""
+    try:
+        from datetime import datetime, timedelta
+        
+        if not schedule_date:
+            schedule_date = datetime.now().strftime("%Y-%m-%d")
+        
+        filters = {"schedule_date": schedule_date}
+        if staff_id:
+            filters["staff"] = staff_id
+        
+        # This would get data from a shift schedule DocType if it exists
+        # For now, return basic shift information
+        shifts = []
+        
+        if staff_id:
+            staff_doc = frappe.get_doc("Restaurant Staff", staff_id)
+            shifts.append({
+                "staff_id": staff_id,
+                "staff_name": staff_doc.full_name,
+                "employee_id": staff_doc.employee_id,
+                "position": staff_doc.position,
+                "shift_start": "09:00:00",
+                "shift_end": "17:00:00",
+                "shift_type": "regular",
+                "expected_hours": 8.0
+            })
+        else:
+            # Get all active staff default shifts
+            staff_list = frappe.get_all("Restaurant Staff",
+                fields=["name", "full_name", "employee_id", "position"],
+                filters={"employment_status": "Active"}
+            )
+            
+            for staff in staff_list:
+                shifts.append({
+                    "staff_id": staff["name"],
+                    "staff_name": staff["full_name"],
+                    "employee_id": staff["employee_id"],
+                    "position": staff["position"],
+                    "shift_start": "09:00:00",
+                    "shift_end": "17:00:00",
+                    "shift_type": "regular",
+                    "expected_hours": 8.0
+                })
+        
+        return {
+            "success": True,
+            "shifts": shifts,
+            "schedule_date": schedule_date,
+            "total_shifts": len(shifts)
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error getting shift schedule: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }

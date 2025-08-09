@@ -2271,6 +2271,96 @@
           }
         }
       ]
+    },
+    {
+      "name": "Face Recognition Integration",
+      "item": [
+        {
+          "name": "Get Restaurant Staff",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_restaurant_staff",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_restaurant_staff"]
+            }
+          }
+        },
+        {
+          "name": "Record Staff Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_id\": \"EMP001\",\n  \"attendance_date\": \"2025-01-15\",\n  \"check_in_time\": \"2025-01-15 09:00:00\",\n  \"check_out_time\": \"2025-01-15 17:30:00\",\n  \"total_hours\": 8.5,\n  \"status\": \"Present\",\n  \"source\": \"face_recognition\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_staff_attendance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.record_staff_attendance"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_attendance_summary?start_date=2025-01-01&end_date=2025-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_attendance_summary"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2025-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sync Face Recognition Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.sync_face_recognition_data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.sync_face_recognition_data"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Shift Schedule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_shift_schedule?schedule_date=2025-01-15",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_staff_shift_schedule"],
+              "query": [
+                {
+                  "key": "schedule_date",
+                  "value": "2025-01-15"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 } 
