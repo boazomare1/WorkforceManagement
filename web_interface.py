@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file
 from database import AttendanceDatabase
 from face_recognition_system_improved import FaceRecognitionSystemImproved
+from face_recognition_network import NetworkFaceRecognitionSystem
 from settings_manager import SettingsManager
 from datetime import datetime, date
 import os
@@ -19,13 +20,19 @@ app.secret_key = 'your-secret-key-here'
 # Initialize systems
 db = AttendanceDatabase()
 settings = SettingsManager()
+
+# Use network-enabled face recognition system for multi-terminal support
+network_face_system = NetworkFaceRecognitionSystem()
+
+# Keep legacy system for backward compatibility
 face_system = FaceRecognitionSystemImproved()
 
-# Apply settings to face system
-face_system.face_recognition_tolerance = settings.get('face_tolerance', 0.6)
-face_system.face_detection_cooldown = settings.get('face_detection_cooldown', 30)
-face_system.minimum_work_hours = settings.get('minimum_work_hours', 1.0)
-face_system.instant_mode = settings.get('instant_mode', True)
+# Apply settings to both systems
+for system in [face_system, network_face_system]:
+    system.face_recognition_tolerance = settings.get('face_tolerance', 0.6)
+    system.face_detection_cooldown = settings.get('face_detection_cooldown', 30)
+    system.minimum_work_hours = settings.get('minimum_work_hours', 1.0)
+    system.instant_mode = settings.get('instant_mode', True)
 
 @app.route('/')
 def index():
@@ -121,6 +128,73 @@ def capture_face_web():
             
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error capturing face: {str(e)}'})
+
+@app.route('/register_network_face', methods=['GET', 'POST'])
+def register_network_face():
+    """Register face to restaurant database (network-enabled)"""
+    if request.method == 'GET':
+        return render_template('register_network_face.html')
+    
+    try:
+        employee_id = request.form['employee_id']
+        full_name = request.form['full_name']
+        
+        if 'face_image' not in request.files:
+            return jsonify({'success': False, 'message': 'No face image provided'})
+        
+        face_file = request.files['face_image']
+        
+        # Save temporary image
+        temp_path = f'temp_network_face_{employee_id}.jpg'
+        face_file.save(temp_path)
+        
+        # Register face to restaurant database
+        success, message = network_face_system.register_face_to_restaurant(
+            employee_id, full_name, temp_path
+        )
+        
+        # Clean up
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        
+        if success:
+            flash(f'Face registered successfully for {full_name}!', 'success')
+            return jsonify({'success': True, 'message': message})
+        else:
+            flash(f'Failed to register face: {message}', 'error')
+            return jsonify({'success': False, 'message': message})
+            
+    except Exception as e:
+        error_msg = f'Error registering face: {str(e)}'
+        flash(error_msg, 'error')
+        return jsonify({'success': False, 'message': error_msg})
+
+@app.route('/sync_faces_from_restaurant', methods=['POST'])
+def sync_faces_from_restaurant():
+    """Manually sync face data from restaurant database"""
+    try:
+        success = network_face_system.sync_face_data_from_restaurant()
+        
+        if success:
+            message = f"Successfully synced {len(network_face_system.known_face_encodings)} faces from restaurant database"
+            return jsonify({'success': True, 'message': message})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to sync face data'})
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'})
+
+@app.route('/network_status')
+def network_status():
+    """Get network face recognition system status"""
+    try:
+        status = network_face_system.get_system_status()
+        return jsonify({
+            'success': True,
+            'status': status
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'})
 
 @app.route('/capture_face/<name>')
 def capture_face(name):

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Register Network Face - Face Recognition System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-network-wired me-2"></i>
+                        Register Face to Restaurant Network
+                    </h3>
+                    <p class="mb-0 mt-2">Register staff face encoding to the central restaurant database for multi-terminal access</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Network Registration:</strong> This will store the face encoding in the restaurant's central database, 
+                        making it accessible from all POS terminals and attendance stations throughout the restaurant.
+                    </div>
+
+                    <form id="networkFaceForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="employee_id" class="form-label">Employee ID *</label>
+                                    <input type="text" class="form-control" id="employee_id" name="employee_id" 
+                                           placeholder="Enter employee ID" required>
+                                    <div class="form-text">Must match the employee ID in the restaurant system</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" 
+                                           placeholder="Enter full name" required>
+                                    <div class="form-text">Staff member's complete name</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="face_image" class="form-label">Face Image *</label>
+                            <input type="file" class="form-control" id="face_image" name="face_image" 
+                                   accept="image/*" required>
+                            <div class="form-text">Upload a clear photo with only one face visible</div>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="mb-3" id="imagePreview" style="display: none;">
+                            <label class="form-label">Image Preview:</label>
+                            <div class="border rounded p-2">
+                                <img id="previewImg" class="img-fluid" style="max-height: 200px;" alt="Face preview">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-secondary me-md-2" onclick="window.history.back()">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>Register to Network
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Network Status Card -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-server me-2"></i>Network Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="networkStatus">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            <span>Checking network status...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm" onclick="refreshNetworkStatus()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh Status
+                        </button>
+                        <button class="btn btn-outline-success btn-sm ms-2" onclick="syncFacesFromRestaurant()">
+                            <i class="fas fa-download me-1"></i>Sync Faces
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load network status on page load
+    refreshNetworkStatus();
+    
+    // Image preview functionality
+    document.getElementById('face_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+    });
+    
+    // Form submission
+    document.getElementById('networkFaceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitNetworkFace();
+    });
+});
+
+function submitNetworkFace() {
+    const form = document.getElementById('networkFaceForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formData = new FormData(form);
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Registering...';
+    
+    fetch('/register_network_face', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', 'Face Registered Successfully!', data.message);
+            form.reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            refreshNetworkStatus(); // Refresh status to show updated face count
+        } else {
+            showAlert('danger', 'Registration Failed', data.message);
+        }
+    })
+    .catch(error => {
+        showAlert('danger', 'Error', 'Network error occurred while registering face');
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt me-2"></i>Register to Network';
+    });
+}
+
+function refreshNetworkStatus() {
+    const statusDiv = document.getElementById('networkStatus');
+    statusDiv.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Checking network status...</span></div>';
+    
+    fetch('/network_status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const status = data.status;
+                const isOnline = status.requests_available && status.face_count !== undefined;
+                
+                let statusHtml = `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-${isOnline ? 'check-circle text-success' : 'exclamation-triangle text-warning'} me-2"></i>
+                                <span><strong>Connection:</strong> ${isOnline ? 'Online' : 'Offline'}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users me-2"></i>
+                                <span><strong>Registered Faces:</strong> ${status.face_count || 0}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clock me-2"></i>
+                                <span><strong>Last Sync:</strong> ${status.last_sync ? new Date(status.last_sync).toLocaleString() : 'Never'}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-server me-2"></i>
+                                <span><strong>API:</strong> ${status.restaurant_api || 'Unknown'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                statusDiv.innerHTML = statusHtml;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Failed to get network status: ${data.message}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            statusDiv.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <i class="fas fa-times-circle me-2"></i>
+                    Network error: Unable to connect to system
+                </div>
+            `;
+        });
+}
+
+function syncFacesFromRestaurant() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Syncing...';
+    
+    fetch('/sync_faces_from_restaurant', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', 'Sync Successful', data.message);
+            refreshNetworkStatus();
+        } else {
+            showAlert('warning', 'Sync Failed', data.message);
+        }
+    })
+    .catch(error => {
+        showAlert('danger', 'Error', 'Failed to sync faces from restaurant');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+}
+
+function showAlert(type, title, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <strong>${title}:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Find container and prepend alert
+    const container = document.querySelector('.container');
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = alertHtml;
+    container.insertBefore(tempDiv.firstElementChild, container.firstElementChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

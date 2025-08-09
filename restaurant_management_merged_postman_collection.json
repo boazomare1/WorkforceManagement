@@ -2359,6 +2359,60 @@
               ]
             }
           }
+        },
+        {
+          "name": "Register Staff Face Encoding",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_id\": \"EMP001\",\n  \"face_encoding\": \"0.1234,-0.5678,0.9012,...\",\n  \"full_name\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.register_staff_face_encoding",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.register_staff_face_encoding"]
+            }
+          }
+        },
+        {
+          "name": "Get All Staff Face Encodings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_all_staff_face_encodings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.get_all_staff_face_encodings"]
+            }
+          }
+        },
+        {
+          "name": "Update Staff Face Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_id\": \"EMP001\",\n  \"face_registered\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_staff_face_status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "method", "restaurant_management.api.update_staff_face_status"]
+            }
+          }
         }
       ]
     }

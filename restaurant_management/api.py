@@ -5726,6 +5726,159 @@ def _update_staff_payroll_data(staff_id, attendance_date, total_hours, overtime_
         frappe.log_error(f"Error updating payroll data: {str(e)}")
 
 @frappe.whitelist(allow_guest=True)
+def register_staff_face_encoding(staff_id=None, employee_id=None, face_encoding=None, full_name=None):
+    """Register face encoding for a staff member in the central database"""
+    try:
+        if not staff_id and not employee_id:
+            return {"success": False, "error": "Staff ID or Employee ID is required"}
+        
+        if not face_encoding:
+            return {"success": False, "error": "Face encoding is required"}
+        
+        # Get staff record
+        staff_doc = None
+        if staff_id:
+            staff_doc = frappe.get_doc("Restaurant Staff", staff_id)
+        elif employee_id:
+            staff_list = frappe.get_all("Restaurant Staff", 
+                filters={"employee_id": employee_id},
+                limit=1
+            )
+            if staff_list:
+                staff_doc = frappe.get_doc("Restaurant Staff", staff_list[0].name)
+        
+        if not staff_doc:
+            return {"success": False, "error": "Staff member not found"}
+        
+        # Store face encoding in central database
+        staff_doc.face_encoding = face_encoding
+        staff_doc.face_registered = 1
+        staff_doc.save()
+        
+        return {
+            "success": True,
+            "message": f"Face encoding registered for {staff_doc.full_name}",
+            "staff_id": staff_doc.name,
+            "staff_name": staff_doc.full_name
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error registering face encoding: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_all_staff_face_encodings():
+    """Get all staff face encodings for face recognition system"""
+    try:
+        staff_with_faces = frappe.get_all("Restaurant Staff",
+            filters={"face_registered": 1},
+            fields=[
+                "name", "employee_id", "full_name", "face_encoding", 
+                "position", "employment_status"
+            ],
+            order_by="full_name"
+        )
+        
+        # Format for face recognition system
+        face_data = []
+        for staff in staff_with_faces:
+            if staff.face_encoding:
+                face_data.append({
+                    "staff_id": staff.name,
+                    "employee_id": staff.employee_id,
+                    "name": staff.full_name,
+                    "face_encoding": staff.face_encoding,
+                    "position": staff.position,
+                    "status": staff.employment_status
+                })
+        
+        return {
+            "success": True,
+            "staff_count": len(face_data),
+            "face_data": face_data
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error getting face encodings: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_staff_by_face_encoding(face_encoding=None, tolerance=0.6):
+    """Find staff member by face encoding (for recognition)"""
+    try:
+        if not face_encoding:
+            return {"success": False, "error": "Face encoding is required"}
+        
+        # Get all staff with face encodings
+        staff_with_faces = frappe.get_all("Restaurant Staff",
+            filters={"face_registered": 1, "employment_status": "Active"},
+            fields=["name", "employee_id", "full_name", "face_encoding", "position"]
+        )
+        
+        # This would need face_recognition library on the server
+        # For now, return the data for the face recognition system to process
+        return {
+            "success": True,
+            "message": "Face encoding comparison should be done on face recognition system",
+            "staff_data": staff_with_faces,
+            "note": "Use get_all_staff_face_encodings for better performance"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error in face recognition lookup: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def update_staff_face_status(staff_id=None, employee_id=None, face_registered=False):
+    """Update face registration status for a staff member"""
+    try:
+        if not staff_id and not employee_id:
+            return {"success": False, "error": "Staff ID or Employee ID is required"}
+        
+        # Get staff record
+        staff_doc = None
+        if staff_id:
+            staff_doc = frappe.get_doc("Restaurant Staff", staff_id)
+        elif employee_id:
+            staff_list = frappe.get_all("Restaurant Staff", 
+                filters={"employee_id": employee_id},
+                limit=1
+            )
+            if staff_list:
+                staff_doc = frappe.get_doc("Restaurant Staff", staff_list[0].name)
+        
+        if not staff_doc:
+            return {"success": False, "error": "Staff member not found"}
+        
+        # Update face registration status
+        staff_doc.face_registered = 1 if face_registered else 0
+        if not face_registered:
+            staff_doc.face_encoding = None  # Clear encoding if unregistering
+        staff_doc.save()
+        
+        return {
+            "success": True,
+            "message": f"Face status updated for {staff_doc.full_name}",
+            "face_registered": bool(staff_doc.face_registered)
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error updating face status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
 def get_staff_shift_schedule(staff_id=None, schedule_date=None):
     """Get staff shift schedules for face recognition system integration"""
     try:
