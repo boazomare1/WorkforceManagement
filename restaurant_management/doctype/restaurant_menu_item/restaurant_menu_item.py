@@ -8,16 +8,41 @@ class RestaurantMenuItem(Document):
         """Generate automatic item code"""
         if not self.item_code:
             # Generate item code: ITEM-YYYY-XXXX
-            year = getdate().year
-            last_item = frappe.get_last_doc("Restaurant Menu Item", filters={"item_code": ["like", f"ITEM-{year}-%"]})
+            from datetime import datetime
+            year = datetime.now().year
             
-            if last_item:
-                last_number = int(last_item.item_code.split('-')[-1])
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            
-            self.item_code = f"ITEM-{year}-{new_number:04d}"
+            try:
+                # Get the last item with a matching pattern
+                last_item = frappe.get_all("Restaurant Menu Item", 
+                    filters={"item_code": ["like", f"ITEM-{year}-%"]},
+                    fields=["item_code"],
+                    order_by="item_code desc",
+                    limit=1)
+                
+                if last_item and last_item[0].item_code:
+                    try:
+                        last_number_str = last_item[0].item_code.split('-')[-1]
+                        last_number = int(last_number_str)
+                        new_number = last_number + 1
+                    except (ValueError, IndexError):
+                        new_number = 1
+                else:
+                    new_number = 1
+                
+                self.item_code = f"ITEM-{year}-{new_number:04d}"
+                
+            except Exception as e:
+                # Fallback to counting existing items
+                try:
+                    existing_count = frappe.db.count("Restaurant Menu Item", 
+                        filters={"item_code": ["like", f"ITEM-{year}-%"]})
+                    new_number = existing_count + 1
+                    self.item_code = f"ITEM-{year}-{new_number:04d}"
+                except:
+                    # Final fallback
+                    import time
+                    timestamp = int(time.time())
+                    self.item_code = f"ITEM-{year}-{timestamp}"
     
     def validate(self):
         """Validate menu item data"""

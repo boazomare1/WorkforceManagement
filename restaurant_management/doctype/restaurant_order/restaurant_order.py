@@ -8,16 +8,41 @@ class RestaurantOrder(Document):
         """Generate automatic order ID"""
         if not self.order_id:
             # Generate order ID: ORD-YYYY-XXXX
-            year = getdate().year
-            last_order = frappe.get_last_doc("Restaurant Order", filters={"order_id": ["like", f"ORD-{year}-%"]})
+            from datetime import datetime
+            year = datetime.now().year
             
-            if last_order:
-                last_number = int(last_order.order_id.split('-')[-1])
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            
-            self.order_id = f"ORD-{year}-{new_number:04d}"
+            try:
+                # Get the last order with a matching pattern
+                last_order = frappe.get_all("Restaurant Order", 
+                    filters={"order_id": ["like", f"ORD-{year}-%"]},
+                    fields=["order_id"],
+                    order_by="order_id desc",
+                    limit=1)
+                
+                if last_order and last_order[0].order_id:
+                    try:
+                        last_number_str = last_order[0].order_id.split('-')[-1]
+                        last_number = int(last_number_str)
+                        new_number = last_number + 1
+                    except (ValueError, IndexError):
+                        new_number = 1
+                else:
+                    new_number = 1
+                
+                self.order_id = f"ORD-{year}-{new_number:04d}"
+                
+            except Exception as e:
+                # Fallback to counting existing orders
+                try:
+                    existing_count = frappe.db.count("Restaurant Order", 
+                        filters={"order_id": ["like", f"ORD-{year}-%"]})
+                    new_number = existing_count + 1
+                    self.order_id = f"ORD-{year}-{new_number:04d}"
+                except:
+                    # Final fallback
+                    import time
+                    timestamp = int(time.time())
+                    self.order_id = f"ORD-{year}-{timestamp}"
     
     def validate(self):
         """Validate order data"""

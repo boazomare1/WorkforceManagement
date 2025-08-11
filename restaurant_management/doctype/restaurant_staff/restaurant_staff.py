@@ -4,20 +4,6 @@ from frappe.utils import nowdate, getdate
 import json
 
 class RestaurantStaff(Document):
-    def autoname(self):
-        """Generate automatic staff ID"""
-        if not self.staff_id:
-            # Generate staff ID: STAFF-YYYY-XXXX
-            year = getdate().year
-            last_staff = frappe.get_last_doc("Restaurant Staff", filters={"staff_id": ["like", f"STAFF-{year}-%"]})
-            
-            if last_staff:
-                last_number = int(last_staff.staff_id.split('-')[-1])
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            
-            self.staff_id = f"STAFF-{year}-{new_number:04d}"
     
     def validate(self):
         """Validate staff data"""
@@ -96,7 +82,7 @@ class RestaurantStaff(Document):
     
     def get_attendance_records(self, start_date=None, end_date=None):
         """Get attendance records for this staff member"""
-        filters = {"staff_id": self.name}
+        filters = {"name": self.name}
         
         if start_date:
             filters["date"] = [">=", start_date]
@@ -131,7 +117,7 @@ class RestaurantStaff(Document):
         base_pay = total_hours * self.base_hourly_rate
         
         return {
-            "staff_id": self.staff_id,
+            "staff_id": self.name,
             "staff_name": self.full_name,
             "period": f"{start_date} to {end_date}",
             "total_hours": total_hours,
@@ -147,7 +133,7 @@ def get_staff_by_face_encoding(face_encoding):
     """Get staff member by face encoding"""
     staff = frappe.get_all("Restaurant Staff", 
         filters={"face_encoding": face_encoding, "employment_status": "Active"},
-        fields=["name", "staff_id", "full_name", "position"])
+        fields=["name", "full_name", "position"])
     
     if staff:
         return staff[0]
@@ -186,7 +172,7 @@ def get_staff_list(filters=None):
     
     staff_list = frappe.get_all("Restaurant Staff", 
         filters=filters,
-        fields=["name", "staff_id", "full_name", "email", "phone", "position", 
+        fields=["name", "full_name", "email", "phone", "position", 
                 "department", "base_hourly_rate", "employment_status", "face_registered"])
     
     return staff_list 

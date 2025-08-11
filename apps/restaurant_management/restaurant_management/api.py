@@ -224,7 +224,7 @@ def get_staff_list():
     try:
         staff_list = frappe.get_all(
             "Restaurant Staff",
-            fields=["name", "staff_id", "full_name", "position", "department", "employment_status", "phone", "email"],
+            fields=["name", "full_name", "position", "department", "employment_status", "phone", "email"],
             order_by="full_name"
         )
         return _response(staff_list)
@@ -252,7 +252,7 @@ def create_staff():
         
         return _response({
             "name": staff_doc.name,
-            "staff_id": staff_doc.staff_id,
+            "staff_id": staff_doc.name,
             "message": "Staff member created successfully"
         })
     except Exception as e:
@@ -267,7 +267,7 @@ def get_staff_details(staff_id=None, name=None):
         
         filters = {}
         if staff_id:
-            filters["staff_id"] = staff_id
+            filters["name"] = staff_id
         if name:
             filters["name"] = name
             
@@ -557,3 +557,25 @@ def get_order_status_summary():
         })
     except Exception as e:
         return _error(f"Failed to get order status summary: {str(e)}", "STATUS_SUMMARY_ERROR", 500) 
+
+# ——————————————————————————————————————————————————————————————
+
+
+
+def get_role_for_position(position):
+    """Get the appropriate role for a staff position"""
+    role_mapping = {
+        "Restaurant Owner": "Restaurant Owner",
+        "Manager": "Restaurant Manager", 
+        "Chef": "Restaurant Kitchen",
+        "Kitchen Staff": "Restaurant Kitchen",
+        "Waiter": "Restaurant Staff",
+        "Waitress": "Restaurant Staff",
+        "Cashier": "Restaurant Cashier",
+        "Host": "Restaurant Staff",
+        "Bartender": "Restaurant Staff"
+    }
+    
+    return role_mapping.get(position, "Restaurant Staff")
+
+# —————————————————————————————————————————————————————————————— 

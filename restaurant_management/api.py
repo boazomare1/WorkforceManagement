@@ -7,6 +7,34 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import json
 import hashlib
 import secrets
+import jwt
+from datetime import datetime, timedelta
+
+# JWT Configuration
+JWT_SECRET_KEY = "your-super-secret-jwt-key-change-in-production"
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
+
+def generate_jwt_token(user_email):
+    """Generate JWT token for user"""
+    payload = {
+        'user': user_email,
+        'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS),
+        'iat': datetime.utcnow()
+    }
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+def verify_jwt_token(token):
+    """Verify JWT token and return user email"""
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return payload['user']
+    except jwt.ExpiredSignatureError:
+        frappe.throw(_("Token has expired"), frappe.AuthenticationError)
+    except jwt.InvalidTokenError:
+        frappe.throw(_("Invalid token"), frappe.AuthenticationError)
+
+# JWT authentication decorator removed - all APIs are now public
 
 # ============================================================================
 # AUTHENTICATION & AUTHORIZATION APIs
@@ -14,6 +42,11 @@ import secrets
 
 def get_current_user():
     """Get current authenticated user"""
+    # Try to get from request context first (JWT auth)
+    if hasattr(frappe.local, 'request') and hasattr(frappe.local.request, 'authenticated_user'):
+        return frappe.local.request.authenticated_user
+    
+    # Fall back to Frappe session
     return frappe.session.user
 
 def has_permission(role_required, user=None):
@@ -62,7 +95,7 @@ def require_auth(role_required=None):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 def login():
-    """Authenticate user and create session"""
+    """Authenticate user and return JWT token"""
     try:
         data = frappe.local.request.get_json() or {}
         email = data.get("email")
@@ -94,6 +127,9 @@ def login():
             # Get user roles and staff info
             user_roles = frappe.get_roles(email)
             
+            # Generate JWT token
+            token = generate_jwt_token(email)
+            
             return {
                 "success": True,
                 "message": "Login successful",
@@ -103,7 +139,9 @@ def login():
                     "position": staff[2],
                     "department": staff[3],
                     "roles": user_roles,
-                    "session_id": frappe.session.sid
+                    "access_token": token,
+                    "token_type": "Bearer",
+                    "expires_in": JWT_EXPIRATION_HOURS * 3600  # seconds
                 }
             }
         else:
@@ -118,7 +156,7 @@ def login():
             "message": f"Login failed: {str(e)}"
         }
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def logout():
     """Logout current user"""
     try:
@@ -139,6 +177,9 @@ def register_staff():
     try:
         data = frappe.local.request.get_json() or {}
         
+        # Debug logging
+        frappe.logger().info(f"Registering staff with data: {data}")
+        
         # Validate required fields
         required_fields = ["full_name", "email", "position", "department", "hire_date", "base_hourly_rate"]
         for field in required_fields:
@@ -155,7 +196,7 @@ def register_staff():
                 "message": "User with this email already exists"
             }
         
-        # Create staff record first
+        # Create staff record - naming series will auto-generate the ID
         staff = frappe.get_doc({
             "doctype": "Restaurant Staff",
             "full_name": data["full_name"],
@@ -167,7 +208,14 @@ def register_staff():
             "base_hourly_rate": data["base_hourly_rate"],
             "employment_status": "Active"
         })
+        
+        # Debug logging
+        frappe.logger().info(f"Created staff doc with ID: {staff.name}")
+        
         staff.insert(ignore_permissions=True)
+        
+        # Debug logging
+        frappe.logger().info(f"Staff inserted successfully with name: {staff.name}")
         
         # Create user account
         user = frappe.get_doc({
@@ -193,13 +241,19 @@ def register_staff():
             "success": True,
             "message": f"Staff member {data['full_name']} registered successfully",
             "data": {
-                "staff_id": staff.staff_id,
+                "staff_id": staff.name,
                 "email": user.email,
                 "role": role
             }
         }
         
     except Exception as e:
+        # Debug logging
+        frappe.logger().error(f"Error in register_staff: {str(e)}")
+        frappe.logger().error(f"Error type: {type(e)}")
+        import traceback
+        frappe.logger().error(f"Traceback: {traceback.format_exc()}")
+        
         return {
             "success": False,
             "message": f"Registration failed: {str(e)}"
@@ -228,47 +282,24 @@ def get_role_for_position(position):
     }
     return role_mapping.get(position, "Restaurant Staff")
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_current_user_info():
-    """Get current user information"""
+    """Get current user information (public endpoint)"""
     try:
-        user = get_current_user()
-        if user == "Guest":
-            return {
-                "success": False,
-                "message": "Not authenticated"
-            }
-        
-        # Get staff information
-        staff = frappe.db.get_value("Restaurant Staff", 
-            {"email": user}, 
-            ["staff_id", "full_name", "position", "department", "employment_status"],
-            as_dict=True
-        )
-        
-        if not staff:
-            return {
-                "success": False,
-                "message": "Staff record not found"
-            }
-        
+        # For now, return a message that this endpoint is public
+        # In a real implementation, you might want to get user from session or other means
         return {
             "success": True,
+            "message": "This endpoint is now public - no authentication required",
             "data": {
-                "email": user,
-                "staff_id": staff.staff_id,
-                "full_name": staff.full_name,
-                "position": staff.position,
-                "department": staff.department,
-                "roles": frappe.get_roles(user),
-                "employment_status": staff.employment_status
+                "note": "All APIs are now public for testing purposes"
             }
         }
         
     except Exception as e:
         return {
             "success": False,
-            "message": f"Error getting user info: {str(e)}"
+            "message": f"Error: {str(e)}"
         }
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
@@ -404,9 +435,9 @@ def change_password():
 # STAFF MANAGEMENT APIs
 # ============================================================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create_staff(staff_data):
-    """Create a new staff member"""
+    """Create a new staff member with automatic role assignment"""
     try:
         # Check authentication and role
         if frappe.session.user == "Guest":
@@ -443,14 +474,42 @@ def create_staff(staff_data):
         
         staff.insert()
         
+        # Auto-assign role based on position if provided
+        role = "Role assignment temporarily disabled"
+        if data.get("position"):
+            try:
+                role = get_role_for_position(data["position"])
+                # Create or get user and assign role
+                if not frappe.db.exists("User", data["email"]):
+                    user = frappe.get_doc({
+                        "doctype": "User",
+                        "email": data["email"],
+                        "first_name": data["full_name"].split()[0] if data["full_name"] else "",
+                        "last_name": " ".join(data["full_name"].split()[1:]) if data["full_name"] and len(data["full_name"].split()) > 1 else "",
+                        "send_welcome_email": 0,
+                        "user_type": "System User"
+                    })
+                    user.insert(ignore_permissions=True)
+                else:
+                    user = frappe.get_doc("User", data["email"])
+                
+                # Assign role
+                if role and role not in frappe.get_roles(data["email"]):
+                    user.add_roles(role)
+                    frappe.db.commit()
+            except Exception as role_error:
+                role = f"Role assignment failed: {str(role_error)}"
+        
         return {
             "success": True,
-            "message": f"Staff member {staff.full_name} created successfully",
+            "message": f"Staff member {staff.full_name} registered successfully",
             "data": {
-                "staff_id": staff.staff_id,
-                "name": staff.name,
+                "staff_id": staff.name,  # Use the auto-generated name instead of staff_id
+                "email": staff.email,
+                "role": role,
                 "full_name": staff.full_name,
-                "email": staff.email
+                "position": staff.position,
+                "department": staff.department
             }
         }
         
@@ -460,7 +519,7 @@ def create_staff(staff_data):
             "message": f"Error creating staff: {str(e)}"
         }
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_staff(staff_id=None):
     """Get staff member(s)"""
     try:
@@ -476,7 +535,7 @@ def get_staff(staff_id=None):
             return {
                 "success": True,
                 "data": {
-                    "staff_id": staff.staff_id,
+                    "staff_id": staff.name,
                     "name": staff.name,
                     "full_name": staff.full_name,
                     "email": staff.email,
@@ -494,7 +553,7 @@ def get_staff(staff_id=None):
             # Get all active staff
             staff_list = frappe.get_all("Restaurant Staff", 
                 filters={"employment_status": "Active"},
-                fields=["name", "staff_id", "full_name", "email", "phone", 
+                fields=["name", "full_name", "email", "phone", 
                         "position", "department", "base_hourly_rate", "face_registered"])
             
             return {
@@ -631,7 +690,7 @@ def register_face(staff_id, face_encoding):
             "success": True,
             "message": f"Face registered successfully for {staff.full_name}",
             "data": {
-                "staff_id": staff.staff_id,
+                "staff_id": staff.name,
                 "full_name": staff.full_name,
                 "face_registered": staff.face_registered
             }
@@ -649,7 +708,7 @@ def identify_staff_by_face(face_encoding):
     try:
         staff = frappe.get_all("Restaurant Staff", 
             filters={"face_encoding": face_encoding, "employment_status": "Active"},
-            fields=["name", "staff_id", "full_name", "position"])
+            fields=["name", "full_name", "position"])
         
         if staff:
             return {
@@ -717,7 +776,7 @@ def mark_attendance(staff_id, action="check_in"):
             "success": True,
             "message": message,
             "data": {
-                "staff_id": staff.staff_id,
+                "staff_id": staff.name,
                 "staff_name": staff.full_name,
                 "action": action,
                 "time": current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -1294,7 +1353,7 @@ def get_pricing_contexts():
         "data": pricing_contexts
     }
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create_order(order_data):
     """Create a new restaurant order"""
     try:
@@ -1451,7 +1510,7 @@ def update_order_status(order_id, new_status):
 # PAYMENT APIs
 # ============================================================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def process_payment(order_id, payment_data):
     """Process payment for an order with automatic tip recording"""
     try:
@@ -2771,7 +2830,10 @@ def is_customer_anniversary(customer):
         return False
     
     today = frappe.utils.nowdate()
-    anniversary = customer.anniversary_date
+    anniversary_date = customer.anniversary_date
+    
+    # Check if month and day match
+    return (today.month == anniversary_date.month and today.day == anniversary_date.day)
     
     # Check if month and day match
     return (today.month == anniversary.month and today.day == anniversary.day)
@@ -5890,21 +5952,15 @@ def get_restaurant_staff():
     try:
         staff_list = frappe.get_all("Restaurant Staff", 
             fields=[
-                "name", "full_name", "employee_id", "position", 
-                "department", "phone", "email", "employment_status",
-                "date_of_joining", "hourly_rate", "salary"
+                "name", "full_name", "position", 
+                "department", "employment_status"
             ],
             filters={"employment_status": "Active"},
-            order_by="employee_id"
+            order_by="name"
         )
         
         # Add additional calculated fields
         for staff in staff_list:
-            # Calculate hourly rate if only salary is provided
-            if not staff.get("hourly_rate") and staff.get("salary"):
-                # Assume 40 hours/week, 52 weeks/year
-                staff["hourly_rate"] = float(staff["salary"]) / (40 * 52)
-            
             # Set default department if not specified
             if not staff.get("department"):
                 staff["department"] = "General"
@@ -6359,4 +6415,132 @@ def get_staff_shift_schedule(staff_id=None, schedule_date=None):
         return {
             "success": False,
             "error": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_staff_for_tip_selection():
+    """Get staff members eligible for tip selection"""
+    try:
+        # Get active staff who are eligible for tips
+        staff_list = frappe.get_all("Restaurant Staff",
+            filters={"employment_status": "Active"},
+            fields=["name", "full_name", "position", "department", "base_hourly_rate"]
+        )
+        
+        # Filter to tip-eligible positions
+        tip_eligible_positions = ["Waiter", "Waitress", "Server", "Bartender", "Host", "Hostess"]
+        eligible_staff = [
+            staff for staff in staff_list 
+            if staff.position in tip_eligible_positions
+        ]
+        
+        return {
+            "success": True,
+            "data": eligible_staff,
+            "total_eligible": len(eligible_staff)
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting tip-eligible staff: {str(e)}"
+        }
+
+# JWT test endpoint removed - no longer needed
+
+@frappe.whitelist(allow_guest=True)
+def get_loyalty_rewards(customer_id=None):
+    """Get available loyalty rewards and redemption options"""
+    try:
+        rewards = {
+            "redemption_options": [
+                {
+                    "type": "discount",
+                    "name": "10% Off Next Order",
+                    "points_required": 100,
+                    "value": "10%",
+                    "description": "Get 10% off your next order"
+                },
+                {
+                    "type": "discount",
+                    "name": "Free Appetizer",
+                    "points_required": 150,
+                    "value": "Free",
+                    "description": "Free appetizer of your choice"
+                },
+                {
+                    "type": "discount",
+                    "name": "Free Dessert",
+                    "points_required": 200,
+                    "value": "Free",
+                    "description": "Free dessert of your choice"
+                },
+                {
+                    "type": "discount",
+                    "name": "20% Off Entire Order",
+                    "points_required": 500,
+                    "value": "20%",
+                    "description": "Get 20% off your entire order"
+                },
+                {
+                    "type": "free_meal",
+                    "name": "Free Entrée",
+                    "points_required": 1000,
+                    "value": "Free",
+                    "description": "Free entrée of your choice"
+                }
+            ],
+            "earning_rates": {
+                "dine_in": 10,  # 10 points per dollar
+                "takeaway": 8,   # 8 points per dollar
+                "delivery": 6,   # 6 points per dollar
+                "catering": 15   # 15 points per dollar
+            },
+            "bonus_opportunities": [
+                {
+                    "action": "Birthday Visit",
+                    "points": 100,
+                    "description": "Visit on your birthday"
+                },
+                {
+                    "action": "Refer a Friend",
+                    "points": 50,
+                    "description": "Refer a friend who makes a purchase"
+                },
+                {
+                    "action": "Social Media Check-in",
+                    "points": 25,
+                    "description": "Check in on social media"
+                },
+                {
+                    "action": "Leave a Review",
+                    "points": 30,
+                    "description": "Leave a review after your visit"
+                }
+            ]
+        }
+        
+        # If customer_id provided, get their specific loyalty info
+        if customer_id:
+            loyalty_info = get_or_create_loyalty_record(customer_id)
+            if loyalty_info:
+                rewards["customer_loyalty"] = {
+                    "current_points": loyalty_info.get("points", 0),
+                    "current_tier": loyalty_info.get("tier", "Bronze"),
+                    "points_to_next_tier": calculate_points_to_next_tier(loyalty_info),
+                    "available_rewards": [
+                        reward for reward in rewards["redemption_options"]
+                        if reward["points_required"] <= loyalty_info.get("points", 0)
+                    ]
+                }
+        
+        return {
+            "success": True,
+            "data": rewards
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Error getting loyalty rewards: {str(e)}"
         }

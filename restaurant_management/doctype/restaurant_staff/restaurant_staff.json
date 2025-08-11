@@ -6,12 +6,14 @@
  "engine": "InnoDB",
  "field_order": [
   "staff_info",
+  "naming_series",
   "personal_info",
   "employment_info",
   "payroll_info",
   "face_recognition",
   "contact_info"
  ],
+
  "fields": [
   {
    "fieldname": "staff_info",
@@ -20,13 +22,13 @@
    "collapsible": 1
   },
   {
-   "fieldname": "staff_id",
-   "fieldtype": "Data",
-   "label": "Staff ID",
-   "unique": 1,
-   "reqd": 1,
-   "read_only": 1
+   "fieldname": "naming_series",
+   "fieldtype": "Link",
+   "label": "Naming Series",
+   "options": "Naming Series",
+   "default": "STAFF-{YYYY}-{####}"
   },
+
   {
    "fieldname": "full_name",
    "fieldtype": "Data",

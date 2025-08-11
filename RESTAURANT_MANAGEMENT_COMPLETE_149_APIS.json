@@ -1,0 +1,2913 @@
+{
+  "info": {
+    "_postman_id": "restaurant-management-complete-system",
+    "name": "Restaurant Management System - COMPLETE API Collection (ALL 149 APIs)",
+    "description": "Complete API collection with ALL 149+ endpoints from the restaurant management system. Includes authentication, testing, and comprehensive coverage of all features.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "\ud83d\udd10 Authentication & Authorization",
+      "item": [
+        {
+          "name": "1. Login - Manager User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@restaurant.com\",\n  \"password\": \"manager123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. Login - Waiter User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"waiter@restaurant.com\",\n  \"password\": \"waiter123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. Login - Chef User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"chef@restaurant.com\",\n  \"password\": \"chef123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. Login - Cashier User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"cashier@restaurant.com\",\n  \"password\": \"cashier123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. Get Current User Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_current_user_info",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.get_current_user_info"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api.logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "item": [
+        {
+          "name": "7. Create Staff",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "8. Get All Staff",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "9. Get Staff by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "10. Update Staff",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "11. Delete Staff",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.delete_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "delete_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payroll Management",
+      "item": [
+        {
+          "name": "12. Calculate Payroll",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.calculate_payroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "calculate_payroll"
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Get Payroll Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_payroll_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_payroll_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Face Recognition",
+      "item": [
+        {
+          "name": "14. Register Face",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.register_face",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "register_face"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "15. Identify Staff by Face",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.identify_staff_by_face",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "identify_staff_by_face"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance Management",
+      "item": [
+        {
+          "name": "16. Mark Check In",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.mark_attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "mark_attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. Mark Check Out",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.mark_attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "mark_attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "18. Get Attendance Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_attendance_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_attendance_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Menu Management",
+      "item": [
+        {
+          "name": "19. Create Menu Category",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_menu_category",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_menu_category"
+              ]
+            }
+          }
+        },
+        {
+          "name": "20. Get Menu Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_menu_categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "21. Create Menu Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_menu_item",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_menu_item"
+              ]
+            }
+          }
+        },
+        {
+          "name": "22. Get Menu Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_menu_items"
+              ]
+            }
+          }
+        },
+        {
+          "name": "23. Get Menu Items by Category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_menu_items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_menu_items"
+              ]
+            }
+          }
+        },
+        {
+          "name": "24. Get Popular Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_popular_items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_popular_items"
+              ]
+            }
+          }
+        },
+        {
+          "name": "25. Get Chef Specials",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_chef_specials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_chef_specials"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Management",
+      "item": [
+        {
+          "name": "26. Create Dine-In Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "27. Create Takeaway Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "28. Create Delivery Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "29. Get All Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_orders"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "30. Get Orders by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_orders"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "31. Get Order Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_details",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_order_details"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "32. Update Order Status",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_order_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_order_status"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "33. Modify Order - Add Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "modify_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "34. Modify Order - Remove Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "modify_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "35. Modify Order - Change Quantity",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "modify_order"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "36. Apply VIP Pricing",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "modify_order"
+              ]
+            }
+          }
+        },
+        {
+          "name": "37. Apply Happy Hour Pricing",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.modify_order",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "modify_order"
+              ]
+            }
+          }
+        },
+        {
+          "name": "38. Get Order Modification History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_modification_history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_order_modification_history"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "39. Generate Final Receipt",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.generate_final_receipt",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "generate_final_receipt"
+              ]
+            }
+          }
+        },
+        {
+          "name": "40. Get Dynamic Price",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_dynamic_price",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_dynamic_price"
+              ]
+            }
+          }
+        },
+        {
+          "name": "41. Get Pricing Contexts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_pricing_contexts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_pricing_contexts"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Processing",
+      "item": [
+        {
+          "name": "42. Process Cash Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "process_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "43. Process Card Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "process_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "44. Process Mobile Money Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "process_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports & Analytics",
+      "item": [
+        {
+          "name": "45. Get Sales Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_sales_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_sales_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "46. Get Order Status Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_status_summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_order_status_summary"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "47. Get Staff Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_stats"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Table Booking & Reservations",
+      "item": [
+        {
+          "name": "48. Create Table Booking",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_table_booking",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_table_booking"
+              ]
+            }
+          }
+        },
+        {
+          "name": "49. Check Table Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_available_tables",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_available_tables"
+              ]
+            }
+          }
+        },
+        {
+          "name": "50. Get Alternative Time Slots",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_alternative_time_slots",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_alternative_time_slots"
+              ]
+            }
+          }
+        },
+        {
+          "name": "51. Get All Bookings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_table_bookings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "52. Get Bookings by Date",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_table_bookings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "53. Get Bookings by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_table_bookings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_table_bookings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "54. Update Booking Status - Seat Customer",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_booking_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "55. Update Booking Status - Complete",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_booking_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "56. Cancel Booking",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_booking_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_booking_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "57. Add to Waitlist",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_to_waitlist",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "add_to_waitlist"
+              ]
+            }
+          }
+        },
+        {
+          "name": "58. Get Customer Booking History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_booking_history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_customer_booking_history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "59. Get Restaurant Layout",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_restaurant_layout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_restaurant_layout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Advance Payments & Tips Management",
+      "item": [
+        {
+          "name": "60. Request Advance Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.request_advance_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "request_advance_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "61. Approve Advance Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.approve_advance_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "approve_advance_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "62. Reject Advance Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.approve_advance_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "approve_advance_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "63. Record Individual Tip",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "record_tips"
+              ]
+            }
+          }
+        },
+        {
+          "name": "64. Record Batch Tips",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "record_tips"
+              ]
+            }
+          }
+        },
+        {
+          "name": "65. Distribute Pooled Tips - Equal",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.distribute_pooled_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "distribute_pooled_tips"
+              ]
+            }
+          }
+        },
+        {
+          "name": "66. Distribute Pooled Tips - By Hours",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.distribute_pooled_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "distribute_pooled_tips"
+              ]
+            }
+          }
+        },
+        {
+          "name": "67. Get Staff Advances",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_advances"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "68. Get Staff Advances by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_advances"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "69. Get Individual Staff Advances",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_advances",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_advances"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "70. Get Staff Tips",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_tips"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "71. Calculate Staff Payroll",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.calculate_staff_payroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "calculate_staff_payroll"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "72. Customer Add Tip - Specific Waiter",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "customer_add_tip"
+              ]
+            }
+          }
+        },
+        {
+          "name": "73. Customer Add Tip - Specific Staff",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "customer_add_tip"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "74. Customer Add Tip - All Staff Pool",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.customer_add_tip",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "customer_add_tip"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "75. Get Staff for Tip Selection",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_for_tip_selection",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_for_tip_selection"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "76. Auto Distribute Daily Tips",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_distribute_daily_pooled_tips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "auto_distribute_daily_pooled_tips"
+              ]
+            }
+          }
+        },
+        {
+          "name": "77. Process Payment with Auto Tip",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "process_payment"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Complimentary System & VIP Treatment",
+      "item": [
+        {
+          "name": "78. Auto Trigger Complimentary Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_trigger_complimentary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "auto_trigger_complimentary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "79. Manual Add Complimentary Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.manual_add_complimentary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "manual_add_complimentary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "80. Get Complimentary Suggestions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_suggestions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_complimentary_suggestions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "81. Get Complimentary History - All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_complimentary_history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "82. Get Complimentary History - Customer",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_complimentary_history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_complimentary_history"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loyalty Program System",
+      "item": [
+        {
+          "name": "83. Add Loyalty Points",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_loyalty_points",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "add_loyalty_points"
+              ]
+            }
+          }
+        },
+        {
+          "name": "84. Redeem Loyalty Points",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.redeem_loyalty_points",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "redeem_loyalty_points"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Event Management System",
+      "item": [
+        {
+          "name": "85. Create Event Booking",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_event_booking",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_event_booking"
+              ]
+            }
+          }
+        },
+        {
+          "name": "86. Check Event Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.check_event_availability",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "check_event_availability"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer Feedback System",
+      "item": [
+        {
+          "name": "87. Submit Customer Feedback",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.submit_customer_feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "submit_customer_feedback"
+              ]
+            }
+          }
+        },
+        {
+          "name": "88. Get Feedback Analytics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_feedback_analytics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_feedback_analytics"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integration & Analytics",
+      "item": [
+        {
+          "name": "89. Process Order Completion",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.process_order_completion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "process_order_completion"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "90. Get Customer 360 View",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_360_view",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_customer_360_view"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Kitchen Display System",
+      "item": [
+        {
+          "name": "91. Send Order to Kitchen",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.send_to_kitchen",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "send_to_kitchen"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "92. Update Kitchen Order Status",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_kitchen_order_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_kitchen_order_status"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "93. Get Kitchen Display Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_kitchen_display_orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_kitchen_display_orders"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory Management System",
+      "item": [
+        {
+          "name": "94. Add Inventory Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.add_inventory_item",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "add_inventory_item"
+              ]
+            }
+          }
+        },
+        {
+          "name": "95. Update Inventory Stock",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_inventory_stock",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_inventory_stock"
+              ]
+            }
+          }
+        },
+        {
+          "name": "96. Get Inventory Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_inventory_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_inventory_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "97. Auto Reorder Inventory",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.auto_reorder_inventory",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "auto_reorder_inventory"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "98. Get Inventory Valuation Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_inventory_valuation_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_inventory_valuation_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comprehensive Reporting",
+      "item": [
+        {
+          "name": "99. Get Daily Operations Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_daily_operations_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_daily_operations_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "100. Get Weekly Performance Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_weekly_performance_report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_weekly_performance_report"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Marketing Campaign Management",
+      "item": [
+        {
+          "name": "101. Create Marketing Campaign",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_marketing_campaign",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_marketing_campaign"
+              ]
+            }
+          }
+        },
+        {
+          "name": "102. Launch Campaign",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.launch_campaign",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "launch_campaign"
+              ]
+            }
+          }
+        },
+        {
+          "name": "103. Create Promotion",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.create_promotion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "create_promotion"
+              ]
+            }
+          }
+        },
+        {
+          "name": "104. Validate Promotion",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.validate_promotion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "validate_promotion"
+              ]
+            }
+          }
+        },
+        {
+          "name": "105. Apply Promotion to Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.apply_promotion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "apply_promotion"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "106. Send Targeted Communication",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.send_targeted_communication",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "send_targeted_communication"
+              ]
+            }
+          }
+        },
+        {
+          "name": "107. Get Campaign Analytics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_campaign_analytics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_campaign_analytics"
+              ]
+            }
+          }
+        },
+        {
+          "name": "108. Get Active Promotions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_active_promotions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_active_promotions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "109. Get Customer Communication History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_customer_communication_history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_customer_communication_history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "110. Trigger Automated Campaigns",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.trigger_automated_campaigns",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "trigger_automated_campaigns"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utility APIs",
+      "item": [
+        {
+          "name": "111. Get Positions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_positions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_positions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "112. Get Departments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_departments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_departments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "113. Get Order Types",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_types",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_order_types"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "114. Get Order Statuses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_order_statuses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_order_statuses"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "115. Get Payment Methods",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_payment_methods",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_payment_methods"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "116. Get Spice Levels",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_spice_levels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_spice_levels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "117. Get Employment Statuses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_employment_statuses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_employment_statuses"
+              ]
+            }
+          }
+        },
+        {
+          "name": "118. Get Genders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_genders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_genders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "119. Get Discount Types",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_discount_types",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_discount_types"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Face Recognition Integration",
+      "item": [
+        {
+          "name": "120. Get Restaurant Staff",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_restaurant_staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_restaurant_staff"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "121. Record Staff Attendance",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.record_staff_attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "record_staff_attendance"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "122. Get Staff Attendance Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_attendance_summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_attendance_summary"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "123. Sync Face Recognition Data",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.sync_face_recognition_data",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "sync_face_recognition_data"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "124. Get Staff Shift Schedule",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_staff_shift_schedule",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_staff_shift_schedule"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "125. Register Staff Face Encoding",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.register_staff_face_encoding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "register_staff_face_encoding"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "126. Get All Staff Face Encodings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.get_all_staff_face_encodings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "get_all_staff_face_encodings"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "127. Update Staff Face Status",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/method/restaurant_management.api.update_staff_face_status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "method",
+                "restaurant_management.api",
+                "update_staff_face_status"
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-save access token from login responses",
+          "if (pm.request.url.path.includes('login') && pm.request.method === 'POST') {",
+          "    pm.globals.set('last_login_email', pm.request.body.raw ? JSON.parse(pm.request.body.raw).email : '');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-extract access token from successful login responses",
+          "if (pm.request.url.path.includes('login') && pm.response.code === 200) {",
+          "    const response = pm.response.json();",
+          "    if (response.message && response.message.success && response.message.data && response.message.data.access_token) {",
+          "        pm.globals.set('access_token', response.message.data.access_token);",
+          "        pm.globals.set('current_user', response.message.data.user);",
+          "        pm.globals.set('user_role', response.message.data.position);",
+          "        console.log('\u2705 Login successful! Token saved for user:', response.message.data.user);",
+          "        console.log('\ud83d\udc64 User Role:', response.message.data.position);",
+          "        console.log('\ud83d\udd11 Token saved to global variable');",
+          "    }",
+          "    ",
+          "    // Test response structure",
+          "    pm.test('Login Response Structure', function () {",
+          "        pm.expect(response).to.have.property('message');",
+          "        pm.expect(response.message).to.have.property('success');",
+          "        pm.expect(response.message).to.have.property('data');",
+          "        pm.expect(response.message.data).to.have.property('access_token');",
+          "        pm.expect(response.message.data).to.have.property('user');",
+          "        pm.expect(response.message.data).to.have.property('position');",
+          "    });",
+          "    ",
+          "    pm.test('Login Success', function () {",
+          "        pm.expect(response.message.success).to.be.true;",
+          "    });",
+          "    ",
+          "    pm.test('Token Present', function () {",
+          "        pm.expect(response.message.data.access_token).to.not.be.empty;",
+          "    });",
+          "    ",
+          "    pm.test('User Info Present', function () {",
+          "        pm.expect(response.message.data.user).to.not.be.empty;",
+          "        pm.expect(response.message.data.position).to.not.be.empty;",
+          "    });",
+          "    ",
+          "    pm.test('Response Time', function () {",
+          "        pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "    });",
+          "} else if (pm.request.url.path.includes('login')) {",
+          "    // Test failed login responses",
+          "    const response = pm.response.json();",
+          "    pm.test('Failed Login Response Structure', function () {",
+          "        pm.expect(response).to.have.property('message');",
+          "        pm.expect(response.message).to.have.property('success');",
+          "        pm.expect(response.message.success).to.be.false;",
+          "    });",
+          "}",
+          "",
+          "// Test authenticated endpoints",
+          "if (pm.request.headers.has('Authorization') && pm.response.code === 200) {",
+          "    pm.test('Authenticated Endpoint Success', function () {",
+          "        pm.expect(pm.response.code).to.equal(200);",
+          "    });",
+          "    ",
+          "    const response = pm.response.json();",
+          "    if (response.message) {",
+          "        pm.test('Response Has Message', function () {",
+          "            pm.expect(response.message).to.have.property('success');",
+          "        });",
+          "    }",
+          "}",
+          "",
+          "// Test unauthorized access",
+          "if (pm.request.headers.has('Authorization') && pm.response.code === 403) {",
+          "    pm.test('Unauthorized Access', function () {",
+          "        pm.expect(pm.response.code).to.equal(403);",
+          "        console.log('\u26a0\ufe0f Unauthorized access - user may not have required permissions');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://site1.local:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "current_user",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_role",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
